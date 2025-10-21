@@ -1,0 +1,12 @@
+.env
+.idea
+.ipynb_checkpoints
+.mypy_cache
+.vscode
+__pycache__
+.pytest_cache
+env
+venv
+
+# macOS
+.DS_Store
