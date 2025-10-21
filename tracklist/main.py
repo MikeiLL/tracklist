@@ -3,6 +3,7 @@ from typing import Union
 from fastapi import FastAPI
 from pydantic import BaseModel
 from datetime import datetime
+import models
 
 app = FastAPI()
 
