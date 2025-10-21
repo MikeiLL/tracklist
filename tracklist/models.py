@@ -5,7 +5,6 @@ from sqlmodel import Field, Session, SQLModel, create_engine, select, ForeignKey
 from datetime import datetime
 from config import settings
 
-#TODO https://fastapi.tiangolo.com/advanced/settings/#read-settings-from-env
 connect_args = {"options": "-c search_path=tracklist,public", }
 engine = create_engine(settings.db_connection_string, connect_args=connect_args, echo=True)
 
