@@ -1,6 +1,6 @@
 from typing import Union, Annotated
 
-from fastapi import FastAPI, Query, Depends
+from fastapi import FastAPI, Query, Depends, HTTPException
 from pydantic import BaseModel
 from datetime import datetime
 import models
@@ -37,16 +37,35 @@ def read_songs(
     songs = session.exec(select(models.Song).offset(offset).limit(limit)).all()
     return songs
 
+
+@app.get("/songs/{song_id}")
+def read_song(song_id: int, session: SessionDep) -> models.Song:
+    song = session.get(models.Song, song_id)
+    if not song:
+        raise HTTPException(status_code=404, detail="models.Song not found")
+    return song
+
+
+@app.delete("/songs/{song_id}")
+def delete_song(song_id: int, session: SessionDep):
+    song = session.get(models.Song, song_id)
+    if not song:
+        raise HTTPException(status_code=404, detail="models.Song not found")
+    session.delete(song)
+    session.commit()
+    return {"ok": True}
+
+
+@app.put("/songs/{song_id}")
+def update_song(song_id: int, session: SessionDep) -> models.Song:
+    song = session.get(models.Song, song_id)
+    if not song:
+        raise HTTPException(status_code=404, detail="models.Song not found")
+    session.update(song)
+    session.commit()
+    session.refresh(song)
+
+
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
-
-
-@app.get("/hymns/{item_id}")
-def read_item(item_id: int, q: Union[str, None] = None):
-    return {"item_id": item_id, "q": q}
-
-
-@app.put("/hymns/{hymn_id}")
-def update_item(hymn_id: int, hymn: Hymn):
-    return {"hymn_title": hymn.title, "service_date": hymn.service_date, "hymn_id": hymn_id}
