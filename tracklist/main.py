@@ -1,5 +1,4 @@
 from typing import Union, Annotated
-from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Query, Depends, HTTPException, Request
 from fastapi.responses import HTMLResponse
@@ -11,13 +10,12 @@ import models
 from sqlmodel import Session, select
 import os
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    models.create_db_and_tables()
-    yield
-    # Can add events for after startup completion here
 
-app = FastAPI(lifespan=lifespan)
+app = FastAPI()
+
+@app.on_event("startup")
+def on_startup():
+    models.create_db_and_tables()
 
 """ TODO:
 https://github.com/tmkontra/fastapi-static-digest maybe
