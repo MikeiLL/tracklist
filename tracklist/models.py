@@ -24,16 +24,13 @@ class EventPublic(EventBase):
     id: int
 
 class EventCreate(EventBase):
-    date: datetime = Field()
-    title: str = Field(default="To be determined", title="The name or title of the event", )
-    description: str = Field()
-    presenter: str = Field(default=None, title="Is there someone associated with this event", )
+    pass
 
 class EventUpdate(EventBase):
-    date: datetime = Field()
-    title: str = Field(default="To be determined", title="The name or title of the event", )
-    description: str = Field()
-    presenter: str = Field(default=None, title="Is there someone associated with this event", )
+    date: datetime | None = None
+    title: str | None = None
+    description: str | None = None
+    presenter: str | None = None
 
 class SongBase(SQLModel):
     title: str = Field(default="Untitled", title="The title of the piece", index=True)

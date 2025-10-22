@@ -44,7 +44,7 @@ def read_songs(
     songs = session.exec(select(models.Song).offset(offset).limit(limit)).all()
     return songs
 
-@app.get("/songs/{song_id}", response_model=list[models.SongPublic])
+@app.get("/songs/{song_id}", response_model=models.SongPublic)
 def read_song(song_id: int, session: SessionDep) -> models.Song:
     song = session.get(models.Song, song_id)
     if not song:
@@ -61,7 +61,7 @@ def delete_song(song_id: int, session: SessionDep):
     return {"ok": True}
 
 @app.patch("/songs/{song_id}", response_model=models.SongPublic)
-def update_song(song_id: int, session: SessionDep, song: models.Song) -> models.Song:
+def update_song(song_id: int, session: SessionDep, song: models.SongUpdate) -> models.Song:
     song_db = session.get(models.Song, song_id)
     song_data = song.model_dump(exclude_unset=True)
     song_db.sqlmodel_update(song_data)
@@ -69,6 +69,51 @@ def update_song(song_id: int, session: SessionDep, song: models.Song) -> models.
     session.commit()
     session.refresh(song_db)
     return song_db
+
+
+
+@app.post("/events/", response_model=models.EventPublic)
+def create_event(event: models.EventCreate, session: SessionDep) -> models.Event:
+    db_event = models.Event.model_validate(event)
+    session.add(db_event)
+    session.commit()
+    session.refresh(db_event)
+    return db_event
+
+@app.get("/events/", response_model=list[models.EventPublic])
+def read_events(
+    session: SessionDep,
+    offset: int = 0,
+    limit: Annotated[int, Query(le=100)] = 100,
+):
+    events = session.exec(select(models.Event).offset(offset).limit(limit)).all()
+    return events
+
+@app.get("/events/{event_id}", response_model=models.EventPublic)
+def read_event(event_id: int, session: SessionDep) -> models.Event:
+    event = session.get(models.Event, event_id)
+    if not event:
+        raise HTTPException(status_code=404, detail="models.Event not found")
+    return event
+
+@app.delete("/events/{event_id}")
+def delete_event(event_id: int, session: SessionDep):
+    event = session.get(models.Event, event_id)
+    if not event:
+        raise HTTPException(status_code=404, detail="models.Event not found")
+    session.delete(event)
+    session.commit()
+    return {"ok": True}
+
+@app.patch("/events/{event_id}", response_model=models.EventPublic)
+def update_event(event_id: int, session: SessionDep, event: models.EventUpdate) -> models.Event:
+    event_db = session.get(models.Event, event_id)
+    event_data = event.model_dump(exclude_unset=True)
+    event_db.sqlmodel_update(event_data)
+    session.add(event_db)
+    session.commit()
+    session.refresh(event_db)
+    return event_db
 
 @app.get("/")
 def read_root():
