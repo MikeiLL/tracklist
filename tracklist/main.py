@@ -1,11 +1,15 @@
 from typing import Union, Annotated
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, Query, Depends, HTTPException
+from fastapi import FastAPI, Query, Depends, HTTPException, Request
+from fastapi.responses import HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 from datetime import datetime
 import models
 from sqlmodel import Session, select
+import os
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -14,6 +18,19 @@ async def lifespan(app: FastAPI):
     # Can add events for after startup completion here
 
 app = FastAPI(lifespan=lifespan)
+
+""" TODO:
+https://github.com/tmkontra/fastapi-static-digest maybe
+def cache_bust(filename):
+    stat = os.stat('static/' + filename)
+    return f"{filename}?mtime={stat.st_mtime}"
+
+app.temlating.jinja_env.globals.update(cache_bust=cache_bust) """
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+
+templates = Jinja2Templates(directory="templates")
 
 
 class Hymn(BaseModel):
@@ -160,6 +177,8 @@ def update_songuse(songuse_id: int, session: SessionDep, songuse: models.SongUse
     return songuse_db
 
 
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
+@app.get("/", response_class=HTMLResponse)
+async def read_item(request: Request):
+    return templates.TemplateResponse(
+        request=request, name="index.html", context={"user": {}}
+    )
