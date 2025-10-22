@@ -1,7 +1,7 @@
 from typing import Annotated
 
 from fastapi import Depends, FastAPI, HTTPException, Query
-from sqlmodel import Field, Session, SQLModel, create_engine, select, ForeignKey
+from sqlmodel import Field, Session, Relationship, SQLModel, create_engine, select, ForeignKey
 from datetime import datetime
 from config import settings
 
@@ -20,8 +20,12 @@ class EventBase(SQLModel):
 class Event(EventBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
 
+    songuses: list["SongUse"] = Relationship(back_populates="event")
+
 class EventPublic(EventBase):
     id: int
+
+    songuses: list["SongUse"] = Relationship(back_populates="event")
 
 class EventCreate(EventBase):
     pass
@@ -39,8 +43,12 @@ class SongBase(SQLModel):
 class Song(SongBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
 
+    songuses: list["SongUse"] = Relationship(back_populates="song")
+
 class SongPublic(SongBase):
     id: int
+
+    songuses: list["SongUse"] = Relationship(back_populates="song")
 
 class SongCreate(SongBase):
     pass
@@ -49,8 +57,28 @@ class SongUpdate(SongBase):
     title: str | None = None
     credits: str | None = None
 
-class SongUse(SQLModel, table=True):
-    id: int | None = Field(default=None, primary_key=True)
-    event: int = Field(ForeignKey(Event.id), title="When used?")
-    song: int = Field(ForeignKey(Song.id), title="Which piece?")
+# TODO https://stackoverflow.com/a/74852191/2223106
+class SongUseBase(SQLModel):
+    event_id: int = Field(foreign_key="event.id", title="When used?")
+    song_id: int = Field(foreign_key="song.id", title="Which piece?")
     usage: str = Field(default=None, title="Intro, Offertory, Meditation, etc...", )
+
+class SongUse(SongUseBase, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+
+    event: Event = Relationship(back_populates="songuses")
+    song: Song = Relationship(back_populates="songuses")
+
+class SongUsePublic(SongUseBase):
+    id: int
+
+    event: Event = Relationship(back_populates="songuses")
+    song: Song = Relationship(back_populates="songuses")
+
+class SongUseCreate(SongUseBase):
+    pass
+
+class SongUseUpdate(SongUseBase):
+    event: int | None = None
+    song: int | None = None
+    usage: str | None = None

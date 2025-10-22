@@ -115,6 +115,51 @@ def update_event(event_id: int, session: SessionDep, event: models.EventUpdate) 
     session.refresh(event_db)
     return event_db
 
+
+@app.post("/songuses/", response_model=models.SongUsePublic)
+def create_song(songuse: models.SongUseCreate, session: SessionDep) -> models.SongUse:
+    db_songuse = models.SongUse.model_validate(songuse)
+    session.add(db_songuse)
+    session.commit()
+    session.refresh(db_songuse)
+    return db_songuse
+
+@app.get("/songuses/", response_model=list[models.SongUsePublic])
+def read_songuses(
+    session: SessionDep,
+    offset: int = 0,
+    limit: Annotated[int, Query(le=100)] = 100,
+):
+    songuses = session.exec(select(models.SongUse).offset(offset).limit(limit)).all()
+    return songuses
+
+@app.get("/songuses/{songuse_id}", response_model=models.SongUsePublic)
+def read_songuse(songuse_id: int, session: SessionDep) -> models.SongUse:
+    songuse = session.get(models.SongUse, songuse_id)
+    if not songuse:
+        raise HTTPException(status_code=404, detail="models.SongUse not found")
+    return songuse
+
+@app.delete("/songuses/{songuse_id}")
+def delete_songuse(songuse_id: int, session: SessionDep):
+    songuse = session.get(models.SongUse, songuse_id)
+    if not songuse:
+        raise HTTPException(status_code=404, detail="models.SongUse not found")
+    session.delete(songuse)
+    session.commit()
+    return {"ok": True}
+
+@app.patch("/songuses/{songuse_id}", response_model=models.SongUsePublic)
+def update_songuse(songuse_id: int, session: SessionDep, songuse: models.SongUseUpdate) -> models.SongUse:
+    songuse_db = session.get(models.SongUse, songuse_id)
+    songuse_data = songuse.model_dump(exclude_unset=True)
+    songuse_db.sqlmodel_update(songuse_data)
+    session.add(songuse_db)
+    session.commit()
+    session.refresh(songuse_db)
+    return songuse_db
+
+
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
