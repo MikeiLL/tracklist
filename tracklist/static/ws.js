@@ -5,4 +5,9 @@ ws.onopen = () => {
   ws.send(JSON.stringify({"cmd": "init", "type": "songs", "group": ""}));
   ws.send(JSON.stringify({"cmd": "addsong", "details": {"title": "test song"}}));
 }
-ws.onmessage = (e) => console.log(e.data);
+ws.onmessage = (e) => {
+    let data = JSON.parse(e.data)
+    data.songs && data.songs.forEach(element => {
+        console.log(JSON.parse(element));
+    });
+}

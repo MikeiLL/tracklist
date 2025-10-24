@@ -52,7 +52,7 @@ async def websocket_route(websocket: WebSocket):
                 mgr = managers[ws_type]
                 mgr.set_group(websocket, ws_group)
                 if not mgr: break
-                await mgr.send_message("connected for type %s" % ws_type, websocket)
+                await mgr.send_message(json.dumps({"cmd": "connected for type %s" % ws_type}), websocket)
                 state = mgr.module.get_state(ws_group)
                 state['cmd'] = "update"
                 await mgr.send_message(json.dumps(state), websocket)
