@@ -4,6 +4,8 @@ from fastapi.websockets import WebSocketDisconnect, WebSocketState
 import itertools
 import json
 
+from . import songs
+
 
 router = APIRouter(
     prefix="/ws",
@@ -13,41 +15,46 @@ router = APIRouter(
 )
 
 class ConnManager:
-    def __init__(self):
-        self.active_conns: list[WebSocket] = []
+    def __init__(self, type):
+        self.groups = {
+            "": [],
+        }
+        self.module = type
 
-    async def connect(self, websocket: WebSocket):
-        await websocket.accept()
-        self.active_conns.append(websocket)
-
-    def disconnect(self, websocket: WebSocket):
-        self.active_conns.remove(websocket)
+    def set_group(self, websocket, group):
+        self.groups[group].append(websocket)
 
     async def send_message(self, message: str, websocket: WebSocket):
         await websocket.send_text(message)
 
-    async def broadcast(self, message: str):
-        for conn in self.active_conns:
+    async def broadcast(self, message: str, group):
+        for conn in self.groups[group]:
             await conn.send_text(message)
 
 managers = {
-    "songs": ConnManager(),
-    "events": ConnManager(),
+    "songs": ConnManager(songs),
+    "events": ConnManager(songs),
 }
 next_client_id = itertools.count()
 
 @router.websocket("")
 async def websocket_route(websocket: WebSocket):
     client_id = next(next_client_id)
+    ws_type = ws_group = None
     await websocket.accept()
     try:
         while True:
             data = await websocket.receive_text()
             message = json.loads(data)
-            type = message.get("type")
-            if message.get("cmd")== "init":
-                mgr = managers[type]
+            if message.get("cmd") == "init":
+                ws_type = message["type"]
+                ws_group = message["group"]
+                mgr = managers[ws_type]
+                mgr.set_group(websocket, ws_group)
                 if not mgr: break
-                await mgr.send_message("connected for type %s" % type, websocket)
+                await mgr.send_message("connected for type %s" % ws_type, websocket)
+                state = mgr.module.get_state(ws_group)
+                state['cmd'] = "update"
+                await mgr.send_message(json.dumps(state), websocket)
     except WebSocketDisconnect:
         websocket.disconnect(websocket)
