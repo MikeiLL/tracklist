@@ -2,6 +2,7 @@
 from fastapi import WebSocket, APIRouter
 from fastapi.websockets import WebSocketDisconnect, WebSocketState
 import itertools
+import json
 
 
 router = APIRouter(
@@ -11,44 +12,42 @@ router = APIRouter(
     responses={},
 )
 
-class ConnectionManager:
-      def __init__(self):
-          self.active_conns: list[WebSocket] = []
+class ConnManager:
+    def __init__(self):
+        self.active_conns: list[WebSocket] = []
 
-      async def connect(self, websocket: WebSocket):
-          await websocket.accept()
-          self.active_conns.append(websocket)
+    async def connect(self, websocket: WebSocket):
+        await websocket.accept()
+        self.active_conns.append(websocket)
 
-      def disconnect(self, websocket: WebSocket):
-          self.active_conns.remove(websocket)
+    def disconnect(self, websocket: WebSocket):
+        self.active_conns.remove(websocket)
 
-      async def send_message(self, message: str, websocket: WebSocket):
-          await websocket.send_text(message)
+    async def send_message(self, message: str, websocket: WebSocket):
+        await websocket.send_text(message)
 
-      async def broadcast(self, message: str):
-          for conn in self.active_conns:
-              await conn.send_text(message)
+    async def broadcast(self, message: str):
+        for conn in self.active_conns:
+            await conn.send_text(message)
 
-manager = ConnectionManager()
+managers = {
+    "songs": ConnManager(),
+    "events": ConnManager(),
+}
 next_client_id = itertools.count()
 
 @router.websocket("")
 async def websocket_route(websocket: WebSocket):
-      client_id = next(next_client_id)
-      print("set or received", client_id)
-      await manager.connect(websocket)
-      try:
-          while True:
-              data = await websocket.receive_text()
-              await manager.send_message(f"you wrote {data}", websocket)
-              await manager.broadcast(f"Client id {client_id} wrote {data}.")
-      except WebSocketDisconnect:
-          manager.disconnect(websocket)
-          await manager.broadcast(f"Client {client_id} has left.")
-
-fake_items_db = {"plumbus": {"name": "Plumbus"}, "gun": {"name": "Portal Gun"}}
-
-
-@router.get("/test")
-async def read_items():
-    return fake_items_db
+    client_id = next(next_client_id)
+    await websocket.accept()
+    try:
+        while True:
+            data = await websocket.receive_text()
+            message = json.loads(data)
+            type = message.get("type")
+            if message.get("cmd")== "init":
+                mgr = managers[type]
+                if not mgr: break
+                await mgr.send_message("connected for type %s" % type, websocket)
+    except WebSocketDisconnect:
+        websocket.disconnect(websocket)
