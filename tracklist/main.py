@@ -1,4 +1,5 @@
 from typing import Union, Annotated
+import itertools
 
 from fastapi import FastAPI, Query, Depends, HTTPException, Request
 from fastapi.responses import HTMLResponse
@@ -10,7 +11,6 @@ from pydantic import BaseModel
 from datetime import datetime
 import models
 from sqlmodel import Session, select
-import os
 
 
 app = FastAPI()
@@ -178,7 +178,7 @@ def update_songuse(songuse_id: int, session: SessionDep, songuse: models.SongUse
 
 class ConnectionManager:
       def __init__(self):
-          self.active_conns: list[WebSocket]
+          self.active_conns: list[WebSocket] = []
 
       async def connect(self, websocket: WebSocket):
           await websocket.accept()
@@ -195,14 +195,21 @@ class ConnectionManager:
               await conn.send_text(message)
 
 manager = ConnectionManager()
+next_client_id = itertools.count()
 
 @app.websocket("/ws")
 async def websocket_route(websocket: WebSocket):
-      await websocket.accept()
-      while True:
-          data = await websocket.receive_text()
-          print(data)
-          await websocket.send_text(f"Message text was {data}")
+      client_id = next(next_client_id)
+      print("set or received", client_id)
+      await manager.connect(websocket)
+      try:
+          while True:
+              data = await websocket.receive_text()
+              await manager.send_message(f"you wrote {data}", websocket)
+              await manager.broadcast(f"Client id {client_id} wrote {data}.")
+      except WebSocketDisconnect:
+          manager.disconnect(websocket)
+          await manager.broadcast(f"Client {client_id} has left.")
 
 @app.get("/", response_class=HTMLResponse)
 async def read_item(request: Request):
