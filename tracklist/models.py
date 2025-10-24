@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import Depends, FastAPI, HTTPException, Query
 from sqlmodel import Field, Session, Relationship, SQLModel, create_engine, select, ForeignKey
 from datetime import datetime
-from config import settings
+from .config import settings
 
 connect_args = {"options": "-c search_path=tracklist,public", }
 engine = create_engine(settings.db_connection_string, connect_args=connect_args, echo=True)

@@ -1,19 +1,20 @@
 from typing import Union, Annotated
-import itertools
 
 from fastapi import FastAPI, Query, Depends, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from fastapi import WebSocket
-from fastapi.websockets import WebSocketDisconnect, WebSocketState
 from pydantic import BaseModel
 from datetime import datetime
-import models
 from sqlmodel import Session, select
+
+from . import models
+from . import sockets
 
 
 app = FastAPI()
+
+app.include_router(sockets.router)
 
 @app.on_event("startup")
 def on_startup():
@@ -176,40 +177,6 @@ def update_songuse(songuse_id: int, session: SessionDep, songuse: models.SongUse
     session.refresh(songuse_db)
     return songuse_db
 
-class ConnectionManager:
-      def __init__(self):
-          self.active_conns: list[WebSocket] = []
-
-      async def connect(self, websocket: WebSocket):
-          await websocket.accept()
-          self.active_conns.append(websocket)
-
-      def disconnect(self, websocket: WebSocket):
-          self.active_conns.remove(websocket)
-
-      async def send_message(self, message: str, websocket: WebSocket):
-          await websocket.send_text(message)
-
-      async def broadcast(self, message: str):
-          for conn in self.active_conns:
-              await conn.send_text(message)
-
-manager = ConnectionManager()
-next_client_id = itertools.count()
-
-@app.websocket("/ws")
-async def websocket_route(websocket: WebSocket):
-      client_id = next(next_client_id)
-      print("set or received", client_id)
-      await manager.connect(websocket)
-      try:
-          while True:
-              data = await websocket.receive_text()
-              await manager.send_message(f"you wrote {data}", websocket)
-              await manager.broadcast(f"Client id {client_id} wrote {data}.")
-      except WebSocketDisconnect:
-          manager.disconnect(websocket)
-          await manager.broadcast(f"Client {client_id} has left.")
 
 @app.get("/", response_class=HTMLResponse)
 async def read_item(request: Request):
