@@ -4,6 +4,8 @@ from fastapi import FastAPI, Query, Depends, HTTPException, Request
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from fastapi import WebSocket
+from fastapi.websockets import WebSocketDisconnect, WebSocketState
 from pydantic import BaseModel
 from datetime import datetime
 import models
@@ -174,6 +176,33 @@ def update_songuse(songuse_id: int, session: SessionDep, songuse: models.SongUse
     session.refresh(songuse_db)
     return songuse_db
 
+class ConnectionManager:
+      def __init__(self):
+          self.active_conns: list[WebSocket]
+
+      async def connect(self, websocket: WebSocket):
+          await websocket.accept()
+          self.active_conns.append(websocket)
+
+      def disconnect(self, websocket: WebSocket):
+          self.active_conns.remove(websocket)
+
+      async def send_message(self, message: str, websocket: WebSocket):
+          await websocket.send_text(message)
+
+      async def broadcast(self, message: str):
+          for conn in self.active_conns:
+              await conn.send_text(message)
+
+manager = ConnectionManager()
+
+@app.websocket("/ws")
+async def websocket_route(websocket: WebSocket):
+      await websocket.accept()
+      while True:
+          data = await websocket.receive_text()
+          print(data)
+          await websocket.send_text(f"Message text was {data}")
 
 @app.get("/", response_class=HTMLResponse)
 async def read_item(request: Request):
