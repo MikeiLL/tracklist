@@ -4,83 +4,81 @@
 {% block head %}
 
 <head>
-  <meta charset="utf-8">
-  <title>Osun's Golden Harvest of Love and Lighe - {% block title %}Track List{% endblock %}</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  {% block stylesheets %}
-  <!-- Different styles for admin, for visibility -->
-  <link href="/static/styles.css" rel=stylesheet type="text/css">
-  {% endblock %}
-  <meta charset="UTF-8">
-  <link rel="icon" href="/static/images/favicon.png">
-  {% block load_scripts %}
-  {% if cache_bust %}
-  <script src="/static/{{ cache_bust('main.js') }}" type="module"></script>
-  <script src="/static/{{ cache_bust('ws.js') }}" type="module"></script>
-  {% else %}
-  <script src="/static/main.js" type="module"></script>
-  <script src="/static/ws.js" type="module"></script>
-  {% endif %}
-  {% endblock %}
+    <meta charset="utf-8">
+    <title>Osun's Golden Harvest of Love and Lighe - {% block title %}Track List{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% block stylesheets %}
+    <!-- Different styles for admin, for visibility -->
+    <link href="/static/styles.css" rel=stylesheet type="text/css">
+    {% endblock %}
+    <meta charset="UTF-8">
+    <link rel="icon" href="/static/images/favicon.png">
+    {% block load_scripts %}
+    {% if cache_bust %}
+    <script src="/static/{{ cache_bust('main.js') }}" type="module"></script>
+    <script src="/static/{{ cache_bust('ws.js') }}" type="module"></script>
+    {% else %}
+    <script src="/static/main.js" type="module"></script>
+    <script src="/static/ws.js" type="module"></script>
+    {% endif %}
+    {% endblock %}
 </head>
 {% endblock %}
 
 <body>
-  <header role="banner">
-    <div id="branding_nav">
-      <div class="topbar">
-        <a href="/">Track List</a>
-        <div class="user">
-          {% if user.fullname %}
-          Logged in as {{ user.fullname }} <a class="btn" href="/logout">Logout</a>
-          {% else %}
-          Not logged in
-          {% endif %}
+    <header role="banner">
+        <div id="branding_nav">
+            <div class="topbar">
+                <a href="/">Track List</a>
+                <div class="user">
+                    {% if user.fullname %}
+                    Logged in as {{ user.fullname }} <a class="btn" href="/logout">Logout</a>
+                    {% else %}
+                    <button type=button id="loginbutton">Login</button>
+                    {% endif %}
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-    <nav>
-      <ul>
-        {% if user.user_level %}
-        {% if user.user_level == 2 %}
-        <li><a href="/admin/users">Users</a></li>
-        <li><a href="/tracks">Your Song Dashboard</a></li>
-        {% else %}
-        <li><a href="/tracks">Dashboard</a></li>
-        {% endif %}
-        {% else %}
-        <button type=button id="loginbutton">Login</button>
-        {% endif %}
-      </ul>
-    </nav>
-  </header>
-  <br style="clear:both">
-  <main>
-    {% block main %}
-    <section id="pattern" class="pattern">
-      A section of the screen
-    </section>
+        <nav>
+            <ul>
+                {% if user.user_level %}
+                {% if user.user_level >= 2 %}
+                <li><a href="/admin/users">Users</a></li>
+                <li><a href="/tracks">Your Song Dashboard</a></li>
+                {% else %}
+                <li><a href="/tracks">Dashboard</a></li>
+                {% endif %}
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+    <br style="clear:both">
+    <main>
+        {% block main %}
+        <section id="pattern" class="pattern">
+            A section of the screen
+        </section>
+        {% endblock %}
+    </main>
+    {% block footer %}
+    <footer aria-label="footer">
+        <h3>&copy; {{year}} </h3>
+        <h4>contact: mike@mzoo.org</h4>
+    </footer>
     {% endblock %}
-  </main>
-  {% block footer %}
-  <footer aria-label="footer">
-    <h3>&copy; {{year}} </h3>
-    <h4>contact: mike@mzoo.org</h4>
-  </footer>
-  {% endblock %}
-  <dialog id=main>
-    <section>
-      <header id="dlg_header" aria-label="dialog header">
-        <h2></h2>
-        <button class="dialog_close" type="button">x</button>
-      </header>
-      <div id="alertmessages"></div>
-      <footer aria-label="dialog footer"></footer>
-    </section>
-  </dialog>
-  <dialog id=spinner>
-    LOADING...
-  </dialog>
+    <dialog id=main>
+        <section>
+            <header id="dlg_header" aria-label="dialog header">
+                <h2></h2>
+                <button class="dialog_close" type="button">x</button>
+            </header>
+            <div id="alertmessages"></div>
+            <footer aria-label="dialog footer"></footer>
+        </section>
+    </dialog>
+    <dialog id=spinner>
+        LOADING...
+    </dialog>
 </body>
 
 </html>
