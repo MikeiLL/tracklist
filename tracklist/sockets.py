@@ -5,6 +5,7 @@ import itertools
 import json
 
 from . import songs
+from . import events
 
 
 router = APIRouter(
@@ -33,7 +34,7 @@ class ConnManager:
 
 managers = {
     "songs": ConnManager(songs),
-    "events": ConnManager(songs),
+    "events": ConnManager(events),
 }
 next_client_id = itertools.count()
 

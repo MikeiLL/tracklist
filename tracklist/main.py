@@ -174,6 +174,7 @@ def update_songuse(songuse_id: int, session: SessionDep, songuse: models.SongUse
 
 
 @app.get("/", response_class=HTMLResponse)
+@app.get("/index", response_class=HTMLResponse)
 async def read_item(request: Request):
     return templates.TemplateResponse(
         request=request, name="index.html",
@@ -182,5 +183,17 @@ async def read_item(request: Request):
             "module": "songs",
             "ws_type": "songs",
             "ws_group": "",
+        },
+    )
+
+@app.get("/event/{id}", response_class=HTMLResponse)
+async def read_item(request: Request, id: int):
+    return templates.TemplateResponse(
+        request=request, name="index.html",
+        context={
+            "user": {},
+            "module": "events",
+            "ws_type": "events",
+            "ws_group": id,
         },
     )
