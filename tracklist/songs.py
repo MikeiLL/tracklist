@@ -11,10 +11,10 @@ from . import models
 
 def get_state(
         group: str,
-        offset: int = 0,
-        limit: Annotated[int, Query(le=100)] = 100,
     ):
     with Session(models.engine) as session:
-        songs = session.exec(select(models.Song).offset(offset).limit(limit)).all()
+        songs = session.exec(select(models.Song).order_by(models.Song.id.desc()).limit(100)).all()
         songs = [song.model_dump() for song in songs]
-    return {"songs":songs}
+        events = session.exec(select(models.Event).order_by(models.Event.date.desc()).limit(100)).all()
+        events = [event.json() for event in events]
+    return {"songs":songs, "events": events}

@@ -15,4 +15,13 @@
 - - - list of dates
 
 - event list
+- - filter, sort
 - single event with songs_uses
+- multiple events with song_uses
+- calendar view (list could be fine)
+
+## Actions
+- add song
+- edit song
+- delete song
+- add, etit, delete event

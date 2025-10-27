@@ -2,7 +2,10 @@ from typing import Annotated
 
 from fastapi import Depends, FastAPI, HTTPException, Query
 from sqlmodel import Field, Session, Relationship, SQLModel, create_engine, select, ForeignKey
+from pydantic.json import pydantic_encoder
 from datetime import datetime
+import json
+
 from .config import settings
 
 connect_args = {"options": "-c search_path=tracklist,public", }
@@ -16,6 +19,11 @@ class EventBase(SQLModel):
     title: str = Field(default="To be determined", title="The name or title of the event", )
     description: str = Field()
     presenter: str = Field(default=None, title="Is there someone associated with this event", )
+
+    def json(self, **kwargs):
+        dict_data = self.model_dump()
+        dict_data['date'] = int(self.date.timestamp())
+        return dict_data
 
 class Event(EventBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
