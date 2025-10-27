@@ -16,10 +16,15 @@
     {% block load_scripts %}
     {% if cache_bust %}
     <script src="/static/{{ cache_bust('main.js') }}" type="module"></script>
-    <script src="/static/{{ cache_bust('ws.js') }}" type="module"></script>
     {% else %}
     <script src="/static/main.js" type="module"></script>
-    <script src="/static/ws.js" type="module"></script>
+    {% endif %}
+    {% if module %}
+    <script src="/static/{{module}}.js" type="module"></script>
+    <script>
+        let ws_type = {{ws_type | tojson}};
+        let ws_group = {{ws_group | tojson}};
+    </script>
     {% endif %}
     {% endblock %}
 </head>

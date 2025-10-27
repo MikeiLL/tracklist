@@ -1,13 +1,14 @@
 console.log("ws.js loaded");
-const ws = new WebSocket("ws://localhost:8000/ws");
-ws.onopen = () => {
-  console.log("sending");
-  ws.send(JSON.stringify({"cmd": "init", "type": "songs", "group": ""}));
-  ws.send(JSON.stringify({"cmd": "addsong", "details": {"title": "test song"}}));
-}
-ws.onmessage = (e) => {
-    let data = JSON.parse(e.data)
-    data.songs && data.songs.forEach(element => {
-        console.log(element);
-    });
+const ws = new WebSocket("/ws");
+
+export default (methods) => {
+    ws.onopen = () => {
+        ws.send(JSON.stringify({"cmd": "init", "type": ws_type, "group": ws_group}));
+        ws.send(JSON.stringify({"cmd": "addsong", "details": {"title": "test song"}}));
+    }
+    ws.onmessage = (e) => {
+        let data = JSON.parse(e.data)
+        if (data.cmd === "update") return methods.render(data);
+        console.log(data);
+    }
 }
