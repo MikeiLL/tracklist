@@ -16,5 +16,5 @@ def get_state(
     ):
     with Session(models.engine) as session:
         songs = session.exec(select(models.Song).offset(offset).limit(limit)).all()
-        songs = [song.model_dump_json() for song in songs]
+        songs = [song.model_dump() for song in songs]
     return {"songs":songs}

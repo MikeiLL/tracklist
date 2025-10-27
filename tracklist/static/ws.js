@@ -8,6 +8,6 @@ ws.onopen = () => {
 ws.onmessage = (e) => {
     let data = JSON.parse(e.data)
     data.songs && data.songs.forEach(element => {
-        console.log(JSON.parse(element));
+        console.log(element);
     });
 }

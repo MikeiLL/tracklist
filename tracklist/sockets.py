@@ -57,4 +57,4 @@ async def websocket_route(websocket: WebSocket):
                 state['cmd'] = "update"
                 await mgr.send_message(json.dumps(state), websocket)
     except WebSocketDisconnect:
-        websocket.disconnect(websocket)
+        websocket.close(websocket)
