@@ -27,23 +27,12 @@ ALGORITHM = os.environ["ALGORITHM"]
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.environ["ACCESS_TOKEN_EXPIRE_MINUTES"])
 
 fake_users_db = {
-    "johndoe": {
-        "username": "johndoe",
-        "full_name": "John Doe",
-        "email": "johndoe@example.com",
-        "hashed_password": "$2b$15$ClnVc9MUxSO3XDU/qiSZpuLnhtpK6MbEcILcQuEgz90SX9izIN9ze",
+    os.environ["SINGLE_USER"]: {
+        "hashed_password": os.environ["HASHED_PASSWORD"],
         "disabled": False,
-    },
-    "alice": {
-        "username": "alice",
-        "full_name": "Alice Wonderson",
-        "email": "alice@example.com",
-        "hashed_password": "fakehashedsecret2",
-        "disabled": True,
+        "username": os.environ["SINGLE_USER"],
     },
 }
-def fake_hash_password(password: str):
-    return "fakehashed" + password
 
 app = FastAPI()
 
@@ -85,8 +74,6 @@ class TokenData(BaseModel):
 
 class User(BaseModel):
     username: str
-    email: str | None = None
-    full_name: str | None = None
     disabled: bool | None = None
 
 

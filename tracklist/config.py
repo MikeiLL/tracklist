@@ -8,6 +8,9 @@ class Settings(BaseSettings):
     secret_key: str = "e0a90a1a7f8503c928185bf8ae9c2515d77c07bccfab2cb25a9cd66adab983d9"
     algorithm: str = "HS256"
     access_token_expire_minutes: int = 30
+    single_user: str = "somestring"
+    hashed_password: str = "$2b$15$CtVNMUv7hCb/46bZ2rQDBuqs.EBqv3MkUeldKgXRojpuOYN5OxnS6"
+    unhashed_pwd: str = "deliverer-varmint-emperor-union"
 
     model_config = SettingsConfigDict(env_file=".env")
 
