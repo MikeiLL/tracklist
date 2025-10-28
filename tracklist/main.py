@@ -7,6 +7,10 @@ from fastapi.templating import Jinja2Templates
 from datetime import datetime
 from sqlmodel import Session, select
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from . import models
 from . import sockets
 
@@ -180,14 +184,15 @@ async def read_item(request: Request):
         request=request, name="index.html",
         context={
             "user": {},
-            "module": "songs",
-            "ws_type": "songs",
+            "module": "index",
+            "ws_type": "index",
             "ws_group": 0,
         },
     )
 
+@app.get("/event", response_class=HTMLResponse)
 @app.get("/event/{id}", response_class=HTMLResponse)
-async def read_item(request: Request, id: int):
+async def read_item(request: Request, id: int = 0):
     return templates.TemplateResponse(
         request=request, name="index.html",
         context={

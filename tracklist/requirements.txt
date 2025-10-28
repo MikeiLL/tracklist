@@ -2,3 +2,4 @@ fastapi
 fastapi[standard]
 sqlmodel
 pydantic-settings
+psycopg2

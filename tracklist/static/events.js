@@ -11,6 +11,14 @@ import ws from "./ws.js";
 ws({
     render: (state) => {
         console.log(state)
-        state.event && set_content("#eventdetails", PRE(state.event));
+        if (state.event) {
+            return set_content("main", [
+                PRE(JSON.stringify(state.event)),
+                PRE(JSON.stringify(state.songs)),
+            ]);
+        }
+        if (state.events) {
+            set_content("main", PRE(JSON.stringify(state.events)));
+        }
     }
 })
