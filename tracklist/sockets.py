@@ -3,7 +3,9 @@ from fastapi import WebSocket, APIRouter
 from fastapi.websockets import WebSocketDisconnect, WebSocketState
 import itertools
 import json
+from collections import defaultdict
 
+from . import index
 from . import songs
 from . import events
 
@@ -17,9 +19,7 @@ router = APIRouter(
 
 class ConnManager:
     def __init__(self, type):
-        self.groups = {
-            "": [],
-        }
+        self.groups = defaultdict(list)
         self.module = type
 
     def set_group(self, websocket, group):
@@ -33,6 +33,7 @@ class ConnManager:
             await conn.send_text(message)
 
 managers = {
+    "index": ConnManager(index),
     "songs": ConnManager(songs),
     "events": ConnManager(events),
 }

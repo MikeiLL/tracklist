@@ -1,4 +1,3 @@
-console.log("ws.js loaded");
 const ws = new WebSocket("/ws");
 
 export default (methods) => {

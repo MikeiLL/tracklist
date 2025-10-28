@@ -182,7 +182,7 @@ async def read_item(request: Request):
             "user": {},
             "module": "songs",
             "ws_type": "songs",
-            "ws_group": "",
+            "ws_group": 0,
         },
     )
 
