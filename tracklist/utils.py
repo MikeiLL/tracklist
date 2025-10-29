@@ -61,7 +61,6 @@ class TokenData(BaseModel):
 
 class User(BaseModel):
     username: str
-    disabled: bool | None = None
 
 
 class UserInDB(User):
