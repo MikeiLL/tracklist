@@ -1,5 +1,5 @@
 
-from fastapi import WebSocket, APIRouter
+from fastapi import WebSocket, APIRouter, Depends
 from fastapi.websockets import WebSocketDisconnect, WebSocketState
 import itertools
 import json
@@ -8,6 +8,7 @@ from collections import defaultdict
 from . import index
 from . import songs
 from . import events
+from . import utils
 
 
 router = APIRouter(
@@ -51,6 +52,9 @@ async def websocket_route(websocket: WebSocket):
             if message.get("cmd") == "init":
                 ws_type = message["type"]
                 ws_group = message["group"]
+                token = message["access_token"]
+                user = utils.get_current_user(token)
+                print(user)
                 mgr = managers[ws_type]
                 mgr.set_group(websocket, ws_group)
                 if not mgr: break

@@ -73,13 +73,13 @@ async def login_for_access_token(
 
 @app.get("/users/me")
 async def read_users_me(
-    current_user: Annotated[utils.User, Depends(utils.get_current_active_user)],
+    current_user: Annotated[utils.User, Depends(utils.get_current_user)],
 ):
     return current_user
 
 @app.post("/songs/", response_model=models.SongPublic)
 def create_song(song: models.SongCreate, session: SessionDep) -> models.Song:
-    current_user: Annotated[utils.User, Depends(utils.get_current_active_user)]
+    current_user: Annotated[utils.User, Depends(utils.get_current_user)]
     db_song = models.Song.model_validate(song)
     session.add(db_song)
     session.commit()
@@ -88,7 +88,7 @@ def create_song(song: models.SongCreate, session: SessionDep) -> models.Song:
 
 @app.get("/songs/", response_model=list[models.SongPublic])
 def read_songs(
-    current_user: Annotated[utils.User, Depends(utils.get_current_active_user)],
+    current_user: Annotated[utils.User, Depends(utils.get_current_user)],
     session: SessionDep,
     offset: int = 0,
     limit: Annotated[int, Query(le=100)] = 100,
