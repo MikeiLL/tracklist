@@ -61,7 +61,6 @@ on("submit", "form#login", async (e) => {
         body: new URLSearchParams(formdata),
       });
     let result = await response.json();
-    localStorage.setItem("tracklist_access_token", result.access_token);
     window.location.reload();
     }
 );

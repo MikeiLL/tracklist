@@ -45,7 +45,7 @@ async def websocket_route(websocket: WebSocket):
     client_id = next(next_client_id)
     ws_type = ws_group = None
     authorization: str = websocket.cookies.get("tracklist_access_token")
-    scheme, param = authorization.split(" ")
+    scheme, token = authorization.split(" ")
     await websocket.accept()
     try:
         while True:
@@ -55,7 +55,6 @@ async def websocket_route(websocket: WebSocket):
             if message.get("cmd") == "init":
                 ws_type = message["type"]
                 ws_group = message["group"]
-                token = param
                 mgr = managers[ws_type]
                 try:
                     user = await utils.get_current_user(token)

@@ -219,8 +219,12 @@ def update_songuse(songuse_id: int, session: SessionDep, songuse: models.SongUse
 @app.get("/index", response_class=HTMLResponse)
 async def read_item(request: Request):
     user = {} #utils.get_current_user() | {}
-    cookie = request.cookies.get('user')
-    print(cookie)
+    authorization: str = request.cookies.get("tracklist_access_token")
+    scheme, token = authorization.split(" ")
+    try:
+        user = await utils.get_current_user(token)
+    except utils.InvalidCredentialsError:
+        pass
     response = templates.TemplateResponse(
         request=request, name="index.html",
         context={
