@@ -6,7 +6,7 @@ from datetime import datetime, timezone, timedelta
 import jwt
 from jwt.exceptions import InvalidTokenError
 
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, status, Request
 from pydantic import BaseModel
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
@@ -30,7 +30,27 @@ fake_users_db = {
     },
 }
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+class InvalidCredentialsError(HTTPException):
+    def __init__(self):
+        super().__init__(
+            status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+          )
+
+class OAuth2PasswordBearerWithCookie(OAuth2PasswordBearer):
+    async def __call__(self, request: Request) -> str | None:
+        authorization: str = request.cookies.get("tracklist_access_token")
+        scheme, param = authorization.split(" ")
+        if not authorization or scheme.lower() != "bearer":
+            if self.auto_error:
+                raise InvalidCredentialsError
+            else:
+                return None
+        return param
+
+oauth2_scheme = OAuth2PasswordBearerWithCookie(tokenUrl="token")
 
 class Token(BaseModel):
     access_token: str
@@ -59,14 +79,6 @@ def authenticate_user(fake_db, username: str, password: str):
     if not check_password(password, user.hashed_password):
         return False
     return user
-
-class InvalidCredentialsError(HTTPException):
-    def __init__(self):
-        super().__init__(
-            status.HTTP_401_UNAUTHORIZED,
-            detail="Could not validate credentials",
-            headers={"WWW-Authenticate": "Bearer"},
-          )
 
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     try:

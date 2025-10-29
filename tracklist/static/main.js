@@ -41,8 +41,8 @@ function render_maindlg(heading, content, footer, alerts) {
   }
 
 on("click", "button#loginbutton", login);
-on("click", "button#logoutbutton", (e) => {
-    localStorage.clear();
+on("click", "button#logoutbutton", async (e) => {
+    await browser.cookies.remove("tracklist_access_token")
     window.location.reload();
  });
 
@@ -61,7 +61,7 @@ on("submit", "form#login", async (e) => {
         body: new URLSearchParams(formdata),
       });
     let result = await response.json();
-    localStorage.setItem("access_token", result.access_token);
+    localStorage.setItem("tracklist_access_token", result.access_token);
     window.location.reload();
     }
 );

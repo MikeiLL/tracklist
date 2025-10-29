@@ -1,5 +1,5 @@
 
-from fastapi import WebSocket, APIRouter, Depends
+from fastapi import WebSocket, APIRouter, Depends, Request
 from fastapi.websockets import WebSocketDisconnect, WebSocketState
 import itertools
 import json
@@ -44,23 +44,24 @@ next_client_id = itertools.count()
 async def websocket_route(websocket: WebSocket):
     client_id = next(next_client_id)
     ws_type = ws_group = None
+    authorization: str = websocket.cookies.get("tracklist_access_token")
+    scheme, param = authorization.split(" ")
     await websocket.accept()
     try:
         while True:
             data = await websocket.receive_text()
             message = json.loads(data)
+            #token = request.cookies.get('access_token')
             if message.get("cmd") == "init":
                 ws_type = message["type"]
                 ws_group = message["group"]
-                token = message["access_token"]
-                print("token", token)
+                token = param
                 mgr = managers[ws_type]
                 try:
                     user = await utils.get_current_user(token)
-                    print(user)
                 except utils.InvalidCredentialsError:
                     await mgr.send_message(json.dumps({"cmd": "error", "message": "Invalid credentials"}), websocket)
-                    websocket.close(websocket)
+                    await websocket.close()
                     return
                 mgr.set_group(websocket, ws_group)
                 if not mgr: break
@@ -68,4 +69,4 @@ async def websocket_route(websocket: WebSocket):
                 state['cmd'] = "update"
                 await mgr.send_message(json.dumps(state), websocket)
     except WebSocketDisconnect:
-        websocket.close(websocket)
+        await websocket.close()

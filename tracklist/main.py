@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import FastAPI, Query, Depends, HTTPException, Request, status
+from fastapi import FastAPI, Query, Depends, HTTPException, Request, status, Response
 from fastapi.responses import HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
@@ -56,8 +56,9 @@ SessionDep = Annotated[Session, Depends(get_session)]
 
 @app.post("/token")
 async def login_for_access_token(
+    response: Response,
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-) -> utils.Token:
+) -> Response:
     user = utils.authenticate_user(utils.fake_users_db, form_data.username, form_data.password)
     if not user:
         raise HTTPException(
@@ -69,7 +70,9 @@ async def login_for_access_token(
     access_token = utils.create_access_token(
         data={"sub": user.username}, expires_delta=access_token_expires
     )
-    return utils.Token(access_token=access_token, token_type="bearer")
+
+    response.set_cookie(key="tracklist_access_token",value=f"Bearer {access_token}", httponly=True)
+    return
 
 @app.get("/users/me")
 async def read_users_me(
@@ -215,8 +218,10 @@ def update_songuse(songuse_id: int, session: SessionDep, songuse: models.SongUse
 @app.get("/", response_class=HTMLResponse)
 @app.get("/index", response_class=HTMLResponse)
 async def read_item(request: Request):
-    user = utils.get_current_user() | {}
-    return templates.TemplateResponse(
+    user = {} #utils.get_current_user() | {}
+    cookie = request.cookies.get('user')
+    print(cookie)
+    response = templates.TemplateResponse(
         request=request, name="index.html",
         context={
             "user": user,
@@ -225,6 +230,8 @@ async def read_item(request: Request):
             "ws_group": 0,
         },
     )
+    response.set_cookie(key="test-cookie", value="fake-cookie-session-value")
+    return response
 
 @app.get("/event", response_class=HTMLResponse)
 @app.get("/event/{id}", response_class=HTMLResponse)

@@ -1,14 +1,26 @@
 const ws = new WebSocket("/ws");
 
+function getCookie(name) {
+    const cookies = document.cookie.split(";");
+    for (let cookie of cookies) {
+      cookie = cookie.trim();
+      if (cookie.startsWith(name + "=")) {
+        return cookie.substring(name.length + 1);
+      }
+    }
+    return null;
+  }
+
+
 export default (methods) => {
-    ws.onopen = () => {
-        let access_token = localStorage.getItem("access_token")
+    ws.onopen = async () => {
+        let access_token = getCookie("tracklist_access_token")
         ws.send(JSON.stringify(
             {
                 "cmd": "init",
                 "type": ws_type,
                 "group": ws_group,
-                "access_token": access_token
+                "tracklist_access_token": access_token
             }
         ));
         ws.send(JSON.stringify({"cmd": "addsong", "details": {"title": "test song"}}));
