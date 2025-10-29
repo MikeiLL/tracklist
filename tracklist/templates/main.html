@@ -36,10 +36,11 @@
             <div class="topbar">
                 <a href="/">Track List</a>
                 <div class="user">
-                    {% if user.fullname %}
-                    Logged in as {{ user.fullname }} <a class="btn" href="/logout">Logout</a>
+                    {% if user.username %}
+                    Logged in as {{ user.username }} <button type=button id="logoutbutton">Logout</button>
                     {% else %}
                     <button type=button id="loginbutton">Login</button>
+                    <button type=button id="logoutbutton">Logout</button>
                     {% endif %}
                 </div>
             </div>
@@ -78,6 +79,7 @@
                 <button class="dialog_close" type="button">x</button>
             </header>
             <div id="alertmessages"></div>
+            <div id="dlg_content"></div>
             <footer aria-label="dialog footer"></footer>
         </section>
     </dialog>

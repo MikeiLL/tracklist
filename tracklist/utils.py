@@ -60,23 +60,26 @@ def authenticate_user(fake_db, username: str, password: str):
         return False
     return user
 
+class InvalidCredentialsError(HTTPException):
+    def __init__(self):
+        super().__init__(
+            status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+          )
+
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username = payload.get("sub")
         if username is None:
-            raise credentials_exception
+            raise InvalidCredentialsError
         token_data = TokenData(username=username)
     except InvalidTokenError:
-        raise credentials_exception
+        raise InvalidCredentialsError
     user = get_user(fake_users_db, username=token_data.username)
     if user is None:
-        raise credentials_exception
+        raise InvalidCredentialsError
     return user
 
 

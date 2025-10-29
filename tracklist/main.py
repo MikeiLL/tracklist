@@ -215,10 +215,11 @@ def update_songuse(songuse_id: int, session: SessionDep, songuse: models.SongUse
 @app.get("/", response_class=HTMLResponse)
 @app.get("/index", response_class=HTMLResponse)
 async def read_item(request: Request):
+    user = utils.get_current_user() | {}
     return templates.TemplateResponse(
         request=request, name="index.html",
         context={
-            "user": {},
+            "user": user,
             "module": "index",
             "ws_type": "index",
             "ws_group": 0,

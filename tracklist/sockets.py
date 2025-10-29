@@ -53,9 +53,15 @@ async def websocket_route(websocket: WebSocket):
                 ws_type = message["type"]
                 ws_group = message["group"]
                 token = message["access_token"]
-                user = utils.get_current_user(token)
-                print(user)
+                print("token", token)
                 mgr = managers[ws_type]
+                try:
+                    user = await utils.get_current_user(token)
+                    print(user)
+                except utils.InvalidCredentialsError:
+                    await mgr.send_message(json.dumps({"cmd": "error", "message": "Invalid credentials"}), websocket)
+                    websocket.close(websocket)
+                    return
                 mgr.set_group(websocket, ws_group)
                 if not mgr: break
                 state = mgr.module.get_state(ws_group)
