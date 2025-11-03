@@ -39,7 +39,6 @@ async def add_process_time_header(request: Request, call_next):
         pass
 
     if not user and request.url.path not in ["/docs","/token"] and not request.url.path.startswith("/static"):
-        print("returning login page")
         return templates.TemplateResponse(
         request=request, name="login.html",
         context={"user": {}},
