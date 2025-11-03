@@ -28,6 +28,26 @@ app = FastAPI()
 
 app.include_router(sockets.router)
 
+@app.middleware("http")
+async def add_process_time_header(request: Request, call_next):
+    authorization: str = request.cookies.get("tracklist_access_token", "")
+    token: str = authorization.replace("Bearer ", "")
+    user = None
+    try:
+        user = await utils.get_current_user(token)
+    except utils.InvalidCredentialsError:
+        pass
+
+    if not user and request.url.path not in ["/docs","/token"] and not request.url.path.startswith("/static"):
+        print("returning login page")
+        return templates.TemplateResponse(
+        request=request, name="login.html",
+        context={"user": {}},
+    )
+    request.state.user = user or {}
+    response = await call_next(request)
+    return response
+
 @app.on_event("startup")
 def on_startup():
     models.create_db_and_tables()
@@ -45,8 +65,6 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 templates = Jinja2Templates(directory="templates")
 
-
-
 def get_session():
     with Session(models.engine) as session:
         yield session
@@ -57,6 +75,7 @@ SessionDep = Annotated[Session, Depends(get_session)]
 @app.post("/token")
 async def login_for_access_token(
     response: Response,
+    request: Request,
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ) -> Response:
     user = utils.authenticate_user(utils.fake_users_db, form_data.username, form_data.password)
@@ -219,22 +238,15 @@ def update_songuse(songuse_id: int, session: SessionDep, songuse: models.SongUse
 @app.get("/index", response_class=HTMLResponse)
 async def read_item(request: Request):
     user = {} #utils.get_current_user() | {}
-    authorization: str = request.cookies.get("tracklist_access_token")
-    scheme, token = authorization.split(" ")
-    try:
-        user = await utils.get_current_user(token)
-    except utils.InvalidCredentialsError:
-        pass
     response = templates.TemplateResponse(
         request=request, name="index.html",
         context={
-            "user": user,
+            "user": request.state.user,
             "module": "index",
             "ws_type": "index",
             "ws_group": 0,
         },
     )
-    response.set_cookie(key="test-cookie", value="fake-cookie-session-value")
     return response
 
 @app.get("/event", response_class=HTMLResponse)

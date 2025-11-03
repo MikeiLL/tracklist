@@ -47,7 +47,7 @@ on("click", "button#logoutbutton", async (e) => {
  });
 
 
-on("submit", "form#login", async (e) => {
+on("submit", "form#login-form", async (e) => {
     e.preventDefault();
     DOM("dialog#spinner").showModal();
     const formdata = new FormData(e.match);
@@ -61,6 +61,6 @@ on("submit", "form#login", async (e) => {
         body: new URLSearchParams(formdata),
       });
     let result = await response.json();
-    window.location.reload();
+    window.location = "/";
     }
 );

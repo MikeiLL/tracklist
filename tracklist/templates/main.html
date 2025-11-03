@@ -5,7 +5,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Osun's Golden Harvest of Love and Lighe - {% block title %}Track List{% endblock %}</title>
+    <title>Track List - {% block title %}Index{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {% block stylesheets %}
     <!-- Different styles for admin, for visibility -->
@@ -37,9 +37,7 @@
                 <a href="/">Track List</a>
                 <div class="user">
                     {% if user.username %}
-                    Logged in as {{ user.username }} <button type=button id="logoutbutton">Logout</button>
-                    {% else %}
-                    <button type=button id="loginbutton">Login</button>
+                    Logged in as {{ user.username }}
                     {% endif %}
                 </div>
             </div>
