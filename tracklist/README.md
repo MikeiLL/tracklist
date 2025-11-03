@@ -3,6 +3,7 @@
 ## Database
 
 - See .env, Models.py and Config.py
+Seems for production migrations, [Alembic](https://alembic.sqlalchemy.org/en/latest/) would be an approach.
 
 ## Cookies, JWTs, expiration, authentication
 *Traditional session cookies* are the normal meaning of a "magic" cookie.

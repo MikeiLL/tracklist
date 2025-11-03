@@ -4,6 +4,7 @@ from fastapi import Depends, FastAPI, HTTPException, Query
 from sqlmodel import Field, Session, Relationship, SQLModel, create_engine, select, ForeignKey
 from pydantic.json import pydantic_encoder
 from datetime import datetime
+from sqlalchemy import Column
 import json
 
 from .config import settings
@@ -16,9 +17,9 @@ def create_db_and_tables():
 
 class EventBase(SQLModel):
     date: datetime = Field()
-    title: str = Field(default="To be determined", title="The name or title of the event", )
-    description: str = Field()
-    presenter: str = Field(default=None, title="Is there someone associated with this event", )
+    title: str | None = Field(default="To be determined", title="The name or title of the event", )
+    description: str | None = Field()
+    presenter: str | None = Field(default=None, title="Is there someone associated with this event", )
 
     def json(self, **kwargs):
         dict_data = self.model_dump()
@@ -62,8 +63,8 @@ class SongCreate(SongBase):
     pass
 
 class SongUpdate(SongBase):
-    title: str | None = None
-    credits: str | None = None
+    title: str | None = Field(default="Untitled")
+    credits: str | None = Field(default="")
 
 # TODO https://stackoverflow.com/a/74852191/2223106
 class SongUseBase(SQLModel):

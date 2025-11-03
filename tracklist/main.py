@@ -254,9 +254,29 @@ async def read_item(request: Request, id: int = 0):
     return templates.TemplateResponse(
         request=request, name="index.html",
         context={
-            "user": {},
+            "user": request.state.user,
             "module": "events",
             "ws_type": "events",
             "ws_group": id,
         },
     )
+
+
+@app.get("/newevent", response_class=HTMLResponse)
+async def create_event(request: Request):
+    return templates.TemplateResponse(
+        request=request, name="newevent.html",
+        context={
+            "user": request.state.user,
+            "module": "newevent",
+            "ws_type": "events",
+            "ws_group": 0,
+        },
+    )
+
+@app.post("/newevent", response_class=HTMLResponse)
+async def create_event(request: Request):
+    # https://www.starlette.dev/requests/
+    async with request.form() as form:
+        print("request form", form)
+    return
