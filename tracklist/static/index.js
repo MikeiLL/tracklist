@@ -25,4 +25,21 @@ ws({
             ],
         ]);
     }
-})
+});
+
+on("click", "#newevent", async (e) => {
+    const response = await fetch("/events", {
+        method: "POST",
+        headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            "date": new Date().toISOString(),
+            "description": "",
+            "presenter": ""
+        }),
+    });
+    const event = await response.json();
+    window.location = `/event/${event.id}`;
+});

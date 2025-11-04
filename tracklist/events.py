@@ -8,6 +8,7 @@ from . import models
 def get_state(
         group: int,
     ):
+    print("Group from get_state", group)
     if group != 0:
         events = database.dict_query("SELECT *, CAST(EXTRACT(epoch FROM date) AS int) as date FROM event WHERE id=%s LIMIT 1", (group,))
         if len(events) < 1:
@@ -15,8 +16,8 @@ def get_state(
         event = events[0]
         songs = database.dict_query("""
                 SELECT title, credits, usage FROM songuse
-                    JOIN song on songuse.song_id = song.id
-                    WHERE songuse.event_id = %s
+                    JOIN song on songuse.song = song.id
+                    WHERE songuse.event = %s
         """, (group,))
         return {"event": event, "songs": songs}
     else:
