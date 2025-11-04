@@ -1,4 +1,4 @@
-const ws = new WebSocket("/ws");
+let ws = null;
 
 function getCookie(name) {
     const cookies = document.cookie.split(";");
@@ -13,9 +13,10 @@ function getCookie(name) {
 
 
 export default (methods) => {
+    ws = new WebSocket("/ws");
     ws.onopen = async () => {
         console.log("websocket connected");
-        let access_token = getCookie("tracklist_access_token")
+        let access_token = getCookie("tracklist_access_token");
         ws.send(JSON.stringify(
             {
                 "cmd": "init",
@@ -33,8 +34,14 @@ export default (methods) => {
     }
     ws.onclose = async () => {
         console.log("websocket disconnected");
+        ws = null;
+        // TODO put something in the DOM
     }
     return {
-        send: msg => ws.send(JSON.stringify(msg)),
+        send: msg => {
+            if (ws) {
+                ws.send(JSON.stringify(msg));
+            } // TODO else queue send 'till the next retry
+        }
     }
 }
