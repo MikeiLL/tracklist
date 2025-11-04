@@ -12,16 +12,9 @@ ws({
     render: (state) => {
         set_content("main", [
             state.songs && [
-                H2("Recent songs"),
                 UL({id: "songs"}, state.songs.map(s => LI([s.title, ' (', s.credits, ')']))),
             ],
-            state.events && [
-                H2("Recent and coming events"),
-                UL({id: "events"}, state.events.map(s => LI(A({
-                    href: `/event/${s.id}`,
-                    title: "View or edit event."
-                }, [s.title, ' (', new Date(s.date * 1000).toISOString(), ')'])))),
-            ],
+
         ]);
     }
 })

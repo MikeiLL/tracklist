@@ -249,9 +249,22 @@ async def read_item(request: Request):
     )
     return response
 
+@app.get("/song", response_class=HTMLResponse)
+@app.get("/song/{id}", response_class=HTMLResponse)
+async def song_get(request: Request, id: int = 0):
+    return templates.TemplateResponse(
+        request=request, name="index.html",
+        context={
+            "user": request.state.user,
+            "module": "songs",
+            "ws_type": "songs",
+            "ws_group": id,
+        },
+    )
+
 @app.get("/event", response_class=HTMLResponse)
 @app.get("/event/{id}", response_class=HTMLResponse)
-async def read_item(request: Request, id: int = 0):
+async def event_get(request: Request, id: int = 0):
     return templates.TemplateResponse(
         request=request, name="index.html",
         context={
@@ -261,23 +274,3 @@ async def read_item(request: Request, id: int = 0):
             "ws_group": id,
         },
     )
-
-
-@app.get("/newevent", response_class=HTMLResponse)
-async def create_event(request: Request):
-    return templates.TemplateResponse(
-        request=request, name="newevent.html",
-        context={
-            "user": request.state.user,
-            "module": "newevent",
-            "ws_type": "events",
-            "ws_group": 0,
-        },
-    )
-
-@app.post("/newevent", response_class=HTMLResponse)
-async def create_event(request: Request):
-    # https://www.starlette.dev/requests/
-    async with request.form() as form:
-        print("request form", form)
-    return

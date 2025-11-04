@@ -8,7 +8,6 @@ from . import models
 def get_state(
         group: int,
     ):
-    print("Group from get_state", group)
     if group != 0:
         events = database.dict_query("SELECT *, CAST(EXTRACT(epoch FROM date) AS int) as date FROM event WHERE id=%s LIMIT 1", (group,))
         if len(events) < 1:
