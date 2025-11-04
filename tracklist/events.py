@@ -16,8 +16,8 @@ def get_state(
         event = events[0]
         songs = database.dict_query("""
                 SELECT title, credits, usage FROM songuse
-                    JOIN song on songuse.song = song.id
-                    WHERE songuse.event = %s
+                    JOIN song on songuse.song_id = song.id
+                    WHERE songuse.event_id = %s
         """, (group,))
         return {"event": event, "songs": songs}
     else:
