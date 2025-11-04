@@ -4,7 +4,7 @@ import {
     on,
     DOM,
 } from "https://rosuav.github.io/choc/factory.js";
-const {FIELDSET, FORM, INPUT, LABEL, LEGEND, PRE} = choc; //autoimport
+const {BR, FIELDSET, FORM, INPUT, LABEL, LEGEND, PRE} = choc; //autoimport
 import {simpleconfirm} from "./utils.js";
 import ws from "./ws.js";
 
@@ -21,12 +21,26 @@ const sock = ws({
                                 .toISOString().split("T")[0]
                         }),
                         LABEL(["Title", INPUT({type: "text", name:"title", value: state.event.title})]),
-                        LABEL(["Desc", INPUT({type: "text", name:"description", value: state.event.description})]),
+                        LABEL(["Description", INPUT({type: "text", name:"description", value: state.event.description})]),
                         LABEL(["Presenter", INPUT({type: "text", name:"presenter", value: state.event.presenter})]),
                     ])
                 ]),
-                PRE(JSON.stringify(state.event)),
-                PRE(JSON.stringify(state.songs)),
+                FORM({id: "songs"}, [
+                    FIELDSET([
+                        LEGEND("Songs"),
+                        state.songs.map(s => {
+                            return [
+                                LABEL(["Title", INPUT({type: "text", name: "title", value: s.title})]),
+                                LABEL(["Credits", INPUT({type: "text", name:"credits", value: s.credits})]),
+                                LABEL(["Usage", INPUT({type: "text", name: "usage", value: s.usage})]),
+                                BR(),
+                            ]
+                        }),
+                        LABEL(["Title", INPUT({type: "text", name: "title"})]),
+                                LABEL(["Credits", INPUT({type: "text", name:"credits"})]),
+                                LABEL(["Usage", INPUT({type: "text", name: "usage"})]),
+                    ])
+                ]),
             ]);
         }
         if (state.events) {
