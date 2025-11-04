@@ -4,7 +4,7 @@ import {
     on,
     DOM,
 } from "https://rosuav.github.io/choc/factory.js";
-const {LI, H2, UL, A} = choc; //autoimport
+const {A, BUTTON, H2, LI, UL} = choc; //autoimport
 import {simpleconfirm} from "./utils.js";
 import ws from "./ws.js";
 
@@ -21,6 +21,7 @@ ws({
                     href: `/event/${s.id}`,
                     title: "View or edit event."
                 }, [s.title, ' (', new Date(s.date * 1000).toISOString(), ')'])))),
+                BUTTON({id: "newevent", type: "button"}, "New Event"),
             ],
         ]);
     }

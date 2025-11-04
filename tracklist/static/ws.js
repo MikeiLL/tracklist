@@ -14,6 +14,7 @@ function getCookie(name) {
 
 export default (methods) => {
     ws.onopen = async () => {
+        console.log("websocket connected");
         let access_token = getCookie("tracklist_access_token")
         ws.send(JSON.stringify(
             {
@@ -29,5 +30,8 @@ export default (methods) => {
         let data = JSON.parse(e.data)
         if (data.cmd === "update") return methods.render(data);
         console.log(data);
+    }
+    ws.onclose = async () => {
+        console.log("websocket disconnected");
     }
 }
