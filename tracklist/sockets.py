@@ -4,6 +4,7 @@ from fastapi.websockets import WebSocketDisconnect, WebSocketState
 import itertools
 import json
 from collections import defaultdict
+import traceback
 
 from . import index
 from . import songs
@@ -67,5 +68,13 @@ async def websocket_route(websocket: WebSocket):
                 state = mgr.module.get_state(ws_group)
                 state['cmd'] = "update"
                 await mgr.send_message(json.dumps(state), websocket)
+            if "cmd" not in message: continue
+            handler = getattr(mgr.module, "sockmsg_" + message["cmd"], None)
+            if handler:
+                try:
+                    handler(locals(), message) #hack
+                except:
+                    print("Error in ws handler", ws_type, ws_group, handler)
+                    traceback.print_exc()
     except WebSocketDisconnect:
         await websocket.close()

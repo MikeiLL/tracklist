@@ -8,7 +8,7 @@ const {A, BUTTON, H2, LI, UL} = choc; //autoimport
 import {simpleconfirm} from "./utils.js";
 import ws from "./ws.js";
 
-ws({
+const sock = ws({
     render: (state) => {
         set_content("main", [
             state.songs && [

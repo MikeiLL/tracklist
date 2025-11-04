@@ -25,3 +25,9 @@ def get_state(
         if len(events) < 1:
             return {"error": "No events found"}
         return {"events": events}
+
+def sockmsg_updateevent(sock: dict, msg: dict):
+    whitelist = ["presenter", "title", "description", "date"]
+    for k,v in msg.items():
+        if k in whitelist:
+            database.query("UPDATE event SET " + k + " = %s WHERE id = %s", (v, sock["ws_group"]))

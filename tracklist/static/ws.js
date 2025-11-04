@@ -34,4 +34,7 @@ export default (methods) => {
     ws.onclose = async () => {
         console.log("websocket disconnected");
     }
+    return {
+        send: msg => ws.send(JSON.stringify(msg)),
+    }
 }
