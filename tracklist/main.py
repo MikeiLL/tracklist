@@ -38,10 +38,11 @@ async def add_process_time_header(request: Request, call_next):
     except utils.InvalidCredentialsError:
         pass
 
-    if not user and request.url.path not in ["/docs","/token"] and not request.url.path.startswith("/static"):
+    if not user and request.url.path not in ["/docs","/token", "/openapi.json"] and not request.url.path.startswith("/static"):
         return templates.TemplateResponse(
         request=request, name="login.html",
         context={"user": {}},
+        status_code=401
     )
     request.state.user = user or {}
     response = await call_next(request)
