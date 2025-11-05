@@ -4,7 +4,7 @@ import {
     on,
     DOM,
 } from "https://rosuav.github.io/choc/factory.js";
-const {BR, BUTTON, FIELDSET, FORM, H2, INPUT, LABEL, LEGEND, LI, PRE, UL} = choc; //autoimport
+const {BR, BUTTON, FIELDSET, FORM, H2, INPUT, LABEL, LEGEND, LI, PRE, SPAN, UL} = choc; //autoimport
 import {simpleconfirm} from "./utils.js";
 import ws from "./ws.js";
 
@@ -13,7 +13,6 @@ const sock = ws({
         console.log(state)
         if (state.event) {
             return set_content("main", [
-                BUTTON({id: "test"},"test"),
                 FORM({id: "event"}, [
                     FIELDSET([
                         LEGEND("Event Details"),
@@ -31,9 +30,10 @@ const sock = ws({
                         LEGEND("Songs"),
                         state.songs.map(s => {
                             return [
-                                LABEL(["Title", INPUT({type: "text", name: "title", value: s.title})]),
-                                LABEL(["Credits", INPUT({type: "text", name:"credits", value: s.credits})]),
+                                SPAN(s.title),
+                                SPAN(s.credits),
                                 LABEL(["Usage", INPUT({type: "text", name: "usage", value: s.usage})]),
+                                BUTTON({class: "removesong", 'data-id': s.id, type: "button"}, "X"),
                                 BR(),
                             ]
                         }),
@@ -74,13 +74,14 @@ on("click", "button#addsong", async (e) => {
             ]
         ),
         songlist && UL([
-            songlist.map(s => LI([s.title, s.credits]))
+            songlist.map(s => LI([
+                BUTTON({class: "addsong", id: s.id, type: "button"}, "+"),
+                s.title, s.credits,
+            ]))
         ])
     ]);
     DOM("dialog#main").showModal();
 });
-
-on("click", "#test", () => sock.send({cmd: "add_song_use", songid: 9, usage: ""}))
 
 on("submit", "#newsong", async (e) => {
     e.preventDefault();
@@ -96,4 +97,15 @@ on("submit", "#newsong", async (e) => {
     const song = await result.json();
     sock.send({cmd: "add_song_use", songid: song.id, usage: formEntries.usage});
     DOM("dialog#main").close();
-})
+});
+
+on("click", ".addsong", async (e) => {
+    e.preventDefault();
+    sock.send({cmd: "add_song_use", songid: e.match.id, usage: ""});
+});
+
+on("click", ".removesong", async (e) => {
+    e.preventDefault();
+    console.log(e.match.id);
+    sock.send({cmd: "remove_song_use", id: e.match.dataset.id});
+});

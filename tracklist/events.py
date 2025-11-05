@@ -15,7 +15,7 @@ class events(WebSocketHandler):
                 return {"error": "Event not found"}
             event = events[0]
             songs = database.dict_query("""
-                    SELECT title, credits, usage FROM songuse
+                    SELECT title, credits, usage, song_id, songuse.id FROM songuse
                         JOIN song on songuse.song_id = song.id
                         WHERE songuse.event_id = %s
             """, (group,))
@@ -33,9 +33,12 @@ class events(WebSocketHandler):
                 database.query("UPDATE event SET " + k + " = %s WHERE id = %s", (v, sock["ws_group"]))
 
     async def sockmsg_add_song_use(self, sock: dict, msg: dict):
-        print(msg)
         songuse = database.query("""
                     INSERT INTO songuse (song_id, event_id, usage) VALUES (%s, %s, %s)
                     """,
                     (msg['songid'], sock["ws_group"], msg.get("usage", "")))
+        await self.send_updates_all(sock["ws_group"])
+
+    async def sockmsg_remove_song_use(self, sock: dict, msg: dict):
+        database.query("DELETE FROM songuse WHERE id=%s", (int(msg['id']),))
         await self.send_updates_all(sock["ws_group"])
