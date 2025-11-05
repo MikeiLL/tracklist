@@ -78,13 +78,6 @@ class SongUse(SongUseBase, table=True):
     event: Event = Relationship(back_populates="songuses")
     song: Song = Relationship(back_populates="songuses")
 
-
-"""
-sqlalchemy.exc.InvalidRequestError: One or more mappers failed to initialize - can't proceed with initialization of other mappers. Triggering mapper: 'Mapper[Event(event)]'. Original exception was: back_populates on relationship 'Event.songuses' refers to attribute 'SongUse.event' that is not a relationship.  The back_populates parameter should refer to the name of a relationship on the target class.
-
-sqlalchemy.exc.InvalidRequestError: back_populates on relationship 'Event.songuses' refers to attribute 'SongUse.event_id' that is not a relationship.  The back_populates parameter should refer to the name of a relationship on the target class.
- """
-
 class SongUsePublic(SongUseBase):
     id: int
 
