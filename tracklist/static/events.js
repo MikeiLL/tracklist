@@ -66,6 +66,10 @@ on("click", "button#addsong", async (e) => {
                     "Credits",
                     INPUT({name: "credits"})
                 ]),
+                LABEL([
+                    "Usage (offertory, etc)",
+                    INPUT({name: "usage"})
+                ]),
                 INPUT({type: "submit"}, "Add song"),
             ]
         ),
@@ -76,18 +80,20 @@ on("click", "button#addsong", async (e) => {
     DOM("dialog#main").showModal();
 });
 
-on("click", "#test", () => sock.send({cmd: "add_song_use", songid: 4, usage: ""}))
+on("click", "#test", () => sock.send({cmd: "add_song_use", songid: 9, usage: ""}))
 
 on("submit", "#newsong", async (e) => {
     e.preventDefault();
-    result = await fetch("/songs", {
+    const formEntries = Object.fromEntries(new FormData(e.match));
+    const result = await fetch("/songs", {
         method: "POST",
         headers: {
             "content-type": "application/json",
             "accept": "application/json",
         },
-        body: JSON.stringify(Object.fromEntries(new FormData(e.match)))
+        body: JSON.stringify(formEntries)
     })
     const song = await result.json();
-    sock.send({cmd: "add_song_use", songid: song.id, usage: ""});
+    sock.send({cmd: "add_song_use", songid: song.id, usage: formEntries.usage});
+    DOM("dialog#main").close();
 })

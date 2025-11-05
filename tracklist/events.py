@@ -33,6 +33,9 @@ class events(WebSocketHandler):
                 database.query("UPDATE event SET " + k + " = %s WHERE id = %s", (v, sock["ws_group"]))
 
     async def sockmsg_add_song_use(self, sock: dict, msg: dict):
-        print(msg['songid'])
-        songuse = database.query("INSERT INTO songuse (song_id, event_id, usage) VALUES (%s, %s, %s)", (msg['songid'], sock["ws_group"], msg.get("usage", "")))
+        print(msg)
+        songuse = database.query("""
+                    INSERT INTO songuse (song_id, event_id, usage) VALUES (%s, %s, %s)
+                    """,
+                    (msg['songid'], sock["ws_group"], msg.get("usage", "")))
         await self.send_updates_all(sock["ws_group"])

@@ -16,7 +16,6 @@ router = APIRouter(
     responses={},
 )
 
-
 @router.websocket("")
 async def websocket_route(websocket: WebSocket):
     ws_type = ws_group = None
@@ -53,3 +52,5 @@ async def websocket_route(websocket: WebSocket):
                     traceback.print_exc()
     except WebSocketDisconnect:
         await websocket.close()
+    finally:
+        if mgr: mgr.remove_from_group(websocket, ws_group)

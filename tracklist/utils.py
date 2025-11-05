@@ -120,6 +120,12 @@ class WebSocketHandler:
     def set_group(self, websocket, group):
         self.groups[group].append(websocket)
 
+    def remove_from_group(self, websocket, group):
+        try:
+            self.groups[group].remove(websocket)
+        except ValueError:
+            pass
+
     async def send_message(self, message: str, websocket: WebSocket):
         await websocket.send_text(message)
 
