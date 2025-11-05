@@ -55,7 +55,7 @@ on("change", "form#event input", (e) => {
 on("click", "button#addsong", async (e) => {
     const data = await fetch("/songs");
     const songlist = await data.json();
-    set_content("dialog#main", [
+    set_content("dialog#main .dlg_content", [
         H2("Song List"),
         FORM({id: "newsong"}, [
                 LABEL([
@@ -106,6 +106,5 @@ on("click", ".addsong", async (e) => {
 
 on("click", ".removesong", async (e) => {
     e.preventDefault();
-    console.log(e.match.id);
     sock.send({cmd: "remove_song_use", id: e.match.dataset.id});
 });
