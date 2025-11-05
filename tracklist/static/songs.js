@@ -14,7 +14,6 @@ ws({
             state.songs && [
                 UL({id: "songs"}, state.songs.map(s => LI([s.title, ' (', s.credits, ')']))),
             ],
-
         ]);
     }
 })
