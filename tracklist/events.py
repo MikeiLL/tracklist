@@ -30,3 +30,8 @@ def sockmsg_updateevent(sock: dict, msg: dict):
     for k,v in msg.items():
         if k in whitelist:
             database.query("UPDATE event SET " + k + " = %s WHERE id = %s", (v, sock["ws_group"]))
+
+def sockmsg_add_song_use(sock: dict, msg: dict):
+    print(msg['songid'])
+    songuse = database.query("INSERT INTO songuse (song_id, event_id, usage) VALUES (%s, %s, %s)", (msg['songid'], sock["ws_group"], msg.get("usage", "")))
+    # This needs to sendupdates_all: refactor use classes

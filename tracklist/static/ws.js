@@ -13,10 +13,12 @@ function getCookie(name) {
 
 
 export default (methods) => {
+    let connected = false;
     function reconnect() {
         ws = new WebSocket("/ws");
         ws.onopen = async () => {
             console.log("websocket connected");
+            connected = true;
             let access_token = getCookie("tracklist_access_token");
             ws.send(JSON.stringify(
                 {
@@ -35,6 +37,7 @@ export default (methods) => {
         }
         ws.onclose = async () => {
             console.log("websocket disconnected");
+            connected = false;
             ws = null;
             setTimeout(reconnect, 250); // try again in 1/4 second
             // TODO put something in the DOM
@@ -43,9 +46,12 @@ export default (methods) => {
     reconnect();
     return {
         send: msg => {
-            if (ws) {
+            if (connected) {
                 ws.send(JSON.stringify(msg));
-            } // TODO else queue send 'till the next retry
+            } else {
+                console.error("No socket connection yet.");
+                // TODO else queue send 'till the next retry
+            }
         }
     }
 }
