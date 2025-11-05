@@ -74,10 +74,10 @@ on("click", "button#addsong", async (e) => {
                 INPUT({type: "submit"}, "Add song"),
             ]
         ),
-        songlist && UL([
+        songlist && UL({class: "songlist"},[
             songlist.map(s => LI([
                 BUTTON({class: "addsong", id: s.id, type: "button"}, "+"),
-                s.title, s.credits,
+                s.title, " by ", s.credits,
             ]))
         ])
     ]);

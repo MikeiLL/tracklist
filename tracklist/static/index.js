@@ -4,8 +4,8 @@ import {
     on,
     DOM,
 } from "https://rosuav.github.io/choc/factory.js";
-const {A, BUTTON, H2, LI, UL} = choc; //autoimport
-import {simpleconfirm} from "./utils.js";
+const {A, BUTTON, DIV, H2, H3, LI, P, UL} = choc; //autoimport
+import {simpleconfirm, formatdate} from "./utils.js";
 import ws from "./ws.js";
 
 const sock = ws({
@@ -20,7 +20,13 @@ const sock = ws({
                 UL({id: "events"}, state.events.map(s => LI(A({
                     href: `/event/${s.id}`,
                     title: "View or edit event."
-                }, [s.title, ' (', new Date(s.date * 1000).toISOString(), ')'])))),
+                },
+                DIV({class: "card"}, [
+                    H3([formatdate(s.date), " ", s.title]),
+                    P(s.presenter),
+                    P(s.description),
+                    ])
+                )))), // end UL
                 BUTTON({id: "newevent", type: "button"}, "New Event"),
             ],
         ]);

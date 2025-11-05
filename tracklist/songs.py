@@ -15,7 +15,7 @@ class songs(WebSocketHandler):
             """, (group,))
             return {"songs": songs}
         else:
-            songs = database.dict_query("SELECT * FROM song ORDER BY song.title DESC")
+            songs = database.dict_query("SELECT * FROM song ORDER BY song.title ASC")
             if len(songs) < 1:
                 return {"error": "No songs found"}
         return {"songs":songs}

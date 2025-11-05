@@ -115,7 +115,7 @@ def read_songs(
     offset: int = 0,
     limit: Annotated[int, Query(le=100)] = 100,
 ):
-    songs = session.exec(select(models.Song).offset(offset).limit(limit)).all()
+    songs = session.exec(select(models.Song).offset(offset).limit(limit).order_by(models.Song.title.asc())).all()
     return songs
 
 @app.get("/songsearch", response_model=list[models.SongPublic])
@@ -167,7 +167,7 @@ def read_events(
     offset: int = 0,
     limit: Annotated[int, Query(le=100)] = 100,
 ):
-    events = session.exec(select(models.Event).offset(offset).limit(limit)).all()
+    events = session.exec(select(models.Event).offset(offset).limit(limit).order_by(models.Event.date.asc())).all()
     return events
 
 @app.get("/events/{event_id}", response_model=models.EventPublic)

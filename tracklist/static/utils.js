@@ -49,3 +49,17 @@ on("click", "#simpleconfirmyes", e => {
 	if (cb) cb(arg);
 	DOM("#simpleconfirmdlg").close();
 })
+
+export function formatdate(datetime) {
+    const num_to_day = {
+        0: "Sun",
+        1: "Mon",
+        2: "Tues",
+        3: "Wed",
+        4: "Thu",
+        5: "Fri",
+        6: "Sat",
+    }
+    const date = new Date(datetime * 1000);
+    return num_to_day[date.getDay()] + " " + date.toISOString().split("T")[0];
+}
