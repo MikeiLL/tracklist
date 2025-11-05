@@ -4,7 +4,7 @@ import {
     on,
     DOM,
 } from "https://rosuav.github.io/choc/factory.js";
-const {BR, BUTTON, FIELDSET, FORM, H2, INPUT, LABEL, LEGEND, LI, PRE, SPAN, UL} = choc; //autoimport
+const {BUTTON, FIELDSET, FORM, H2, INPUT, LABEL, LEGEND, LI, PRE, SPAN, TABLE, TBODY, TD, TH, THEAD, TR, UL} = choc; //autoimport
 import {simpleconfirm} from "./utils.js";
 import ws from "./ws.js";
 
@@ -26,17 +26,18 @@ const sock = ws({
                     ])
                 ]),
                 FORM({id: "songs"}, [
-                    FIELDSET([
-                        LEGEND("Songs"),
-                        state.songs.map(s => {
-                            return [
-                                SPAN(s.title),
-                                SPAN(s.credits),
-                                LABEL(["Usage", INPUT({type: "text", name: "usage", value: s.usage})]),
-                                BUTTON({class: "removesong", 'data-id': s.id, type: "button"}, "X"),
-                                BR(),
-                            ]
-                        }),
+                    TABLE([
+                        THEAD([
+                            TR(TH({colSpan: 3}, "Songs")),
+                            TR([TH("Title"), TH("Credits"), TH("Usage"), TH()])
+                        ]),
+                        TBODY([state.songs.map(s => TR([
+                                TD(SPAN(s.title)),
+                                TD(SPAN(s.credits)),
+                                TD(INPUT({type: "text", name: "usage", value: s.usage})),
+                                TD(BUTTON({class: "removesong", 'data-id': s.id, type: "button"}, "X")),
+                            ])
+                        )]),
                         BUTTON({id: "addsong", type: "button"}, "Add Song"),
                     ])
                 ]),
