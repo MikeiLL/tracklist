@@ -1,16 +1,10 @@
 
-from fastapi import WebSocket, APIRouter, Depends, Request
-from fastapi.websockets import WebSocketDisconnect, WebSocketState
-import itertools
+from fastapi import WebSocket, APIRouter, Depends
+from fastapi.websockets import WebSocketDisconnect
 import json
 from collections import defaultdict
 import traceback
-
-from . import index
-from . import songs
-from . import events
 from . import utils
-
 
 router = APIRouter(
     prefix="/ws",
@@ -19,10 +13,15 @@ router = APIRouter(
     responses={},
 )
 
-class ConnManager:
-    def __init__(self, type):
+ws_managers = {}
+
+class WebSocketHandler:
+
+    def __init__(self):
         self.groups = defaultdict(list)
-        self.module = type
+
+    def __init_subclass__(cls):
+        ws_managers[cls.__name__] = cls()
 
     def set_group(self, websocket, group):
         self.groups[group].append(websocket)
@@ -30,20 +29,25 @@ class ConnManager:
     async def send_message(self, message: str, websocket: WebSocket):
         await websocket.send_text(message)
 
-    async def broadcast(self, message: str, group):
+    async def broadcast(self, group, message: str):
         for conn in self.groups[group]:
             await conn.send_text(message)
 
-managers = {
-    "index": ConnManager(index),
-    "songs": ConnManager(songs),
-    "events": ConnManager(events),
-}
-next_client_id = itertools.count()
+    async def send_updates_all(self, group):
+        state = await self.get_state(group)
+        state["cmd"] = "update"
+        message = json.dumps(state)
+        await self.broadcast(group, message)
+
+    async def get_state(self, group: int):
+        return {}
+
+from . import index
+from . import songs
+from . import events
 
 @router.websocket("")
 async def websocket_route(websocket: WebSocket):
-    client_id = next(next_client_id)
     ws_type = ws_group = None
     authorization: str = websocket.cookies.get("tracklist_access_token")
     scheme, token = authorization.split(" ")
@@ -56,7 +60,8 @@ async def websocket_route(websocket: WebSocket):
             if message.get("cmd") == "init":
                 ws_type = message["type"]
                 ws_group = message["group"]
-                mgr = managers[ws_type]
+                mgr = ws_managers.get(ws_type)
+                if not mgr: break
                 try:
                     user = await utils.get_current_user(token)
                 except utils.InvalidCredentialsError:
@@ -64,15 +69,14 @@ async def websocket_route(websocket: WebSocket):
                     await websocket.close()
                     return
                 mgr.set_group(websocket, ws_group)
-                if not mgr: break
-                state = mgr.module.get_state(ws_group)
+                state = await mgr.get_state(ws_group)
                 state['cmd'] = "update"
                 await mgr.send_message(json.dumps(state), websocket)
             if "cmd" not in message: continue
-            handler = getattr(mgr.module, "sockmsg_" + message["cmd"], None)
+            handler = getattr(mgr, "sockmsg_" + message["cmd"], None)
             if handler:
                 try:
-                    handler(locals(), message) #hack
+                    await handler(locals(), message) #hack
                 except:
                     print("Error in ws handler", ws_type, ws_group, handler)
                     traceback.print_exc()

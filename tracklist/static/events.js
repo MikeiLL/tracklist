@@ -76,7 +76,7 @@ on("click", "button#addsong", async (e) => {
     DOM("dialog#main").showModal();
 });
 
-on("click", "#test", () => sock.send({cmd: "add_song_use", songid: 5, usage: ""}))
+on("click", "#test", () => sock.send({cmd: "add_song_use", songid: 4, usage: ""}))
 
 on("submit", "#newsong", async (e) => {
     e.preventDefault();
