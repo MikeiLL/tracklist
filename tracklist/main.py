@@ -118,9 +118,13 @@ def read_songs(
     songs = session.exec(select(models.Song).offset(offset).limit(limit)).all()
     return songs
 
-@app.get("/songs/{song_id}", response_model=models.SongPublic)
-def read_song(song_id: int, session: SessionDep) -> models.Song:
-    song = session.get(models.Song, song_id)
+@app.get("/songsearch", response_model=list[models.SongPublic])
+def read_song(session: SessionDep, q: str | None = None) -> models.Song:
+    if q:
+        print("############query\n\n\n\n")
+        print(q)
+
+    song = session.query(models.Song).filter(models.Song.title.like(f'%{q}%')).all()
     if not song:
         raise HTTPException(status_code=404, detail="models.Song not found")
     return song
