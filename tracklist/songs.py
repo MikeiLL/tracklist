@@ -1,7 +1,7 @@
 from typing import Annotated
 import json
 from . import database
-from .sockets import WebSocketHandler
+from .utils import WebSocketHandler
 
 class songs(WebSocketHandler):
 

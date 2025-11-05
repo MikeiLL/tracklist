@@ -6,7 +6,7 @@ from pydantic import BaseModel
 from sqlmodel import Session, select
 
 from . import models
-from .sockets import WebSocketHandler
+from .utils import WebSocketHandler
 
 class index(WebSocketHandler):
 

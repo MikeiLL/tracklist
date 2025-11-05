@@ -3,10 +3,12 @@ import bcrypt
 import binascii
 import os
 from datetime import datetime, timezone, timedelta
+import json
 import jwt
 from jwt.exceptions import InvalidTokenError
+from collections import defaultdict
 
-from fastapi import Depends, HTTPException, status, Request
+from fastapi import Depends, HTTPException, status, Request, WebSocket
 from pydantic import BaseModel
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
@@ -103,3 +105,33 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
+
+
+ws_managers = {}
+
+class WebSocketHandler:
+
+    def __init__(self):
+        self.groups = defaultdict(list)
+
+    def __init_subclass__(cls):
+        ws_managers[cls.__name__] = cls()
+
+    def set_group(self, websocket, group):
+        self.groups[group].append(websocket)
+
+    async def send_message(self, message: str, websocket: WebSocket):
+        await websocket.send_text(message)
+
+    async def broadcast(self, group, message: str):
+        for conn in self.groups[group]:
+            await conn.send_text(message)
+
+    async def send_updates_all(self, group):
+        state = await self.get_state(group)
+        state["cmd"] = "update"
+        message = json.dumps(state)
+        await self.broadcast(group, message)
+
+    async def get_state(self, group: int):
+        return {}

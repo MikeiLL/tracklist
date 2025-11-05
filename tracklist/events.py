@@ -2,7 +2,7 @@ from typing import Annotated
 import json
 from . import database
 from . import models
-from .sockets import WebSocketHandler
+from .utils import WebSocketHandler
 
 class events(WebSocketHandler):
     async def get_state(
