@@ -10,20 +10,20 @@ import ws from "./ws.js";
 
 const sock = ws({
     render: (state) => {
-        set_content("main", DIV({class: "flexrow"},[
-            state.songs && DIV([
+        set_content("main", DIV({class: "flexrow split"},[
+            state.songs && DIV({class:"card"}, [
                 H2("Songs"),
                 A({href: "/song", title:"see all songs"}, "See all ->"),
                 UL({id: "songs"}, state.songs.map(s => LI([s.title, ' (', s.credits, ')']))),
             ]),
-            state.events && DIV([
+            state.events && DIV({class:"card"}, [
                 H2("Upcoming Events"),
                 A({href: "/event", title:"see all events"}, "See all ->"),
                 UL({id: "events"}, state.events.map(s => LI(A({
                     href: `/event/${s.id}`,
                     title: "View or edit event."
                 },
-                DIV({class: "card"}, [
+                DIV({}, [
                     H3([utils.formatdate(s.date), " ", s.title]),
                     P(s.presenter),
                     P(s.description),

@@ -100,7 +100,11 @@ async def read_users_me(
     return current_user
 
 @app.post("/songs/", response_model=models.SongPublic)
-def create_song(song: models.SongCreate, session: SessionDep) -> models.Song:
+def create_song(
+        song: models.SongCreate,
+        session: SessionDep,
+        current_user: Annotated[utils.User, Depends(utils.get_current_user)],
+        ) -> models.Song:
     current_user: Annotated[utils.User, Depends(utils.get_current_user)]
     db_song = models.Song.model_validate(song)
     session.add(db_song)
@@ -110,19 +114,21 @@ def create_song(song: models.SongCreate, session: SessionDep) -> models.Song:
 
 @app.get("/songs/", response_model=list[models.SongPublic])
 def read_songs(
-    current_user: Annotated[utils.User, Depends(utils.get_current_user)],
-    session: SessionDep,
-    offset: int = 0,
-    limit: Annotated[int, Query(le=100)] = 100,
-):
+        current_user: Annotated[utils.User, Depends(utils.get_current_user)],
+        session: SessionDep,
+        offset: int = 0,
+        limit: Annotated[int, Query(le=100)] = 100,
+    ):
     songs = session.exec(select(models.Song).offset(offset).limit(limit).order_by(models.Song.title.asc())).all()
     return songs
 
 @app.get("/songsearch", response_model=list[models.SongPublic])
-def read_song(session: SessionDep,
-            offset: int = 0,
-            limit: Annotated[int, Query(le=100)] = 100,
-            title: str | None = None) -> models.Song:
+def read_song(
+        current_user: Annotated[utils.User, Depends(utils.get_current_user)],
+        session: SessionDep,
+        offset: int = 0,
+        limit: Annotated[int, Query(le=100)] = 100,
+        title: str | None = None) -> models.Song:
     songs = None
     if title:
         songs = session.exec(select(models.Song).filter(models.Song.title.like(f'%{title}%'))).all()
@@ -133,7 +139,11 @@ def read_song(session: SessionDep,
     return songs
 
 @app.delete("/songs/{song_id}")
-def delete_song(song_id: int, session: SessionDep):
+def delete_song(
+        song_id: int,
+        session: SessionDep,
+        current_user: Annotated[utils.User, Depends(utils.get_current_user)],
+        ):
     song = session.get(models.Song, song_id)
     if not song:
         raise HTTPException(status_code=404, detail="models.Song not found")
@@ -142,7 +152,11 @@ def delete_song(song_id: int, session: SessionDep):
     return {"ok": True}
 
 @app.patch("/songs/{song_id}", response_model=models.SongPublic)
-def update_song(song_id: int, session: SessionDep, song: models.SongUpdate) -> models.Song:
+def update_song(
+        song_id: int,
+        session: SessionDep,
+        current_user: Annotated[utils.User, Depends(utils.get_current_user)],
+        song: models.SongUpdate) -> models.Song:
     song_db = session.get(models.Song, song_id)
     song_data = song.model_dump(exclude_unset=True)
     song_db.sqlmodel_update(song_data)
@@ -154,7 +168,11 @@ def update_song(song_id: int, session: SessionDep, song: models.SongUpdate) -> m
 
 
 @app.post("/events/", response_model=models.EventPublic)
-def create_event(event: models.EventCreate, session: SessionDep) -> models.Event:
+def create_event(
+        event: models.EventCreate,
+        session: SessionDep,
+        current_user: Annotated[utils.User, Depends(utils.get_current_user)],
+    ) -> models.Event:
     db_event = models.Event.model_validate(event)
     session.add(db_event)
     session.commit()
@@ -163,22 +181,31 @@ def create_event(event: models.EventCreate, session: SessionDep) -> models.Event
 
 @app.get("/events/", response_model=list[models.EventPublic])
 def read_events(
-    session: SessionDep,
-    offset: int = 0,
-    limit: Annotated[int, Query(le=100)] = 100,
-):
+        current_user: Annotated[utils.User, Depends(utils.get_current_user)],
+        session: SessionDep,
+        offset: int = 0,
+        limit: Annotated[int, Query(le=100)] = 100,
+    ):
     events = session.exec(select(models.Event).offset(offset).limit(limit).order_by(models.Event.date.asc())).all()
     return events
 
 @app.get("/events/{event_id}", response_model=models.EventPublic)
-def read_event(event_id: int, session: SessionDep) -> models.Event:
+def read_event(
+        event_id: int,
+        session: SessionDep,
+        current_user: Annotated[utils.User, Depends(utils.get_current_user)],
+    ) -> models.Event:
     event = session.get(models.Event, event_id)
     if not event:
         raise HTTPException(status_code=404, detail="models.Event not found")
     return event
 
 @app.delete("/events/{event_id}")
-def delete_event(event_id: int, session: SessionDep):
+def delete_event(
+        event_id: int,
+        session: SessionDep,
+        current_user: Annotated[utils.User, Depends(utils.get_current_user)]
+    ):
     event = session.get(models.Event, event_id)
     if not event:
         raise HTTPException(status_code=404, detail="models.Event not found")
@@ -187,7 +214,12 @@ def delete_event(event_id: int, session: SessionDep):
     return {"ok": True}
 
 @app.patch("/events/{event_id}", response_model=models.EventPublic)
-def update_event(event_id: int, session: SessionDep, event: models.EventUpdate) -> models.Event:
+def update_event(
+        event_id: int,
+        session: SessionDep,
+        event: models.EventUpdate,
+        current_user: Annotated[utils.User, Depends(utils.get_current_user)],
+    ) -> models.Event:
     event_db = session.get(models.Event, event_id)
     event_data = event.model_dump(exclude_unset=True)
     event_db.sqlmodel_update(event_data)
@@ -198,7 +230,11 @@ def update_event(event_id: int, session: SessionDep, event: models.EventUpdate) 
 
 
 @app.post("/songuses/", response_model=models.SongUsePublic)
-def create_song(songuse: models.SongUseCreate, session: SessionDep) -> models.SongUse:
+def create_song(
+        songuse: models.SongUseCreate,
+        session: SessionDep,
+        current_user: Annotated[utils.User, Depends(utils.get_current_user)],
+    ) -> models.SongUse:
     db_songuse = models.SongUse.model_validate(songuse)
     session.add(db_songuse)
     session.commit()
@@ -207,22 +243,28 @@ def create_song(songuse: models.SongUseCreate, session: SessionDep) -> models.So
 
 @app.get("/songuses/", response_model=list[models.SongUsePublic])
 def read_songuses(
-    session: SessionDep,
-    offset: int = 0,
-    limit: Annotated[int, Query(le=100)] = 100,
-):
+        current_user: Annotated[utils.User, Depends(utils.get_current_user)],
+        session: SessionDep,
+        offset: int = 0,
+        limit: Annotated[int, Query(le=100)] = 100,
+    ):
     songuses = session.exec(select(models.SongUse).offset(offset).limit(limit)).all()
     return songuses
 
 @app.get("/songuses/{songuse_id}", response_model=models.SongUsePublic)
-def read_songuse(songuse_id: int, session: SessionDep) -> models.SongUse:
+def read_songuse(
+        current_user: Annotated[utils.User, Depends(utils.get_current_user)],
+        songuse_id: int,
+        session: SessionDep) -> models.SongUse:
     songuse = session.get(models.SongUse, songuse_id)
     if not songuse:
         raise HTTPException(status_code=404, detail="models.SongUse not found")
     return songuse
 
 @app.delete("/songuses/{songuse_id}")
-def delete_songuse(songuse_id: int, session: SessionDep):
+def delete_songuse(
+        current_user: Annotated[utils.User, Depends(utils.get_current_user)],
+        songuse_id: int, session: SessionDep):
     songuse = session.get(models.SongUse, songuse_id)
     if not songuse:
         raise HTTPException(status_code=404, detail="models.SongUse not found")
@@ -231,7 +273,11 @@ def delete_songuse(songuse_id: int, session: SessionDep):
     return {"ok": True}
 
 @app.patch("/songuses/{songuse_id}", response_model=models.SongUsePublic)
-def update_songuse(songuse_id: int, session: SessionDep, songuse: models.SongUseUpdate) -> models.SongUse:
+def update_songuse(
+        current_user: Annotated[utils.User, Depends(utils.get_current_user)],
+        songuse_id: int,
+        session: SessionDep,
+        songuse: models.SongUseUpdate) -> models.SongUse:
     songuse_db = session.get(models.SongUse, songuse_id)
     songuse_data = songuse.model_dump(exclude_unset=True)
     songuse_db.sqlmodel_update(songuse_data)

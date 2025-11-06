@@ -29,9 +29,19 @@ body {
     gap: 1em;
 }
 
-ul.cards {
-    list-style: none;
+.card {
+    border: 1px solid var(--grey);
+    border-radius: 10px;
+    padding: 1em;
 }
+
+
+ul.cards,
+ul {
+    list-style: none;
+    padding-left: 0;
+}
+
 
 ul.cards li {
     background-color: var(--brandsecondary);
@@ -282,4 +292,9 @@ img {
     p {
         font-size: 1.2em;
     }
+
+    .flexrow.split>div {
+        max-width: 50%;
+    }
+
 }
