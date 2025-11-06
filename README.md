@@ -48,3 +48,20 @@ massive revocation list).
 - edit song
 - delete song
 - add, etit, delete event
+
+## Serving via Nginx and Fastapi
+`sudo -e /etc/systemd/system/tracklist.service`
+```
+[Service]
+User=admin
+WorkingDirectory=/home/admin/tracklist
+ExecStart=/home/admin/tracklist/venv/bin/fastapi run main.py
+[Install]
+WantedBy=multi-user.target
+```
+Then:
+```
+sudo systemctl daemon-reload
+sudo systemctl enable tracklist
+sudo systemctl start tracklist
+```
