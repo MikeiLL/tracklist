@@ -4,3 +4,4 @@ sqlmodel
 pydantic-settings
 psycopg2
 pyjwt
+bcrypt
