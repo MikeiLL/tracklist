@@ -46,6 +46,7 @@ export default (methods) => {
     reconnect();
     return {
         send: msg => {
+            console.log("sending", msg)
             if (connected) {
                 ws.send(JSON.stringify(msg));
             } else {

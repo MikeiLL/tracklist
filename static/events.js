@@ -4,7 +4,7 @@ import {
     on,
     DOM,
 } from "https://rosuav.github.io/choc/factory.js";
-const {A, BUTTON, FIELDSET, FORM, H2, INPUT, LABEL, LEGEND, LI, SPAN, TABLE, TBODY, TD, TH, THEAD, TR, UL} = choc; //autoimport
+const {A, BUTTON, FIELDSET, FORM, H2, INPUT, LABEL, LEGEND, LI, PRE, SPAN, TABLE, TBODY, TD, TH, THEAD, TR, UL} = choc; //autoimport
 import {simpleconfirm, formatdate} from "./utils.js";
 import ws from "./ws.js";
 
@@ -28,14 +28,14 @@ const sock = ws({
                 FORM({id: "songs"}, [
                     TABLE([
                         THEAD([
-                            TR(TH({colSpan: 3}, "Songs")),
+                            TR(TH({colSpan: 4}, "Songs")),
                             TR([TH("Title"), TH("Credits"), TH("Usage"), TH()])
                         ]),
-                        TBODY([state.songs.map(s => TR([
+                        TBODY([state.songs.map(s => TR({'data-id': s.id},[
                                 TD(SPAN(s.title)),
                                 TD(SPAN(s.credits)),
                                 TD(INPUT({type: "text", name: "usage", value: s.usage})),
-                                TD(BUTTON({class: "removesong", 'data-id': s.id, type: "button"}, "X")),
+                                TD(BUTTON({class: "removesong", type: "button"}, "X")),
                             ])
                         )]),
                         BUTTON({id: "addsong", type: "button"}, "Add Song"),
@@ -46,7 +46,7 @@ const sock = ws({
         if (state.events) {
             set_content("main", TABLE([
                 THEAD([
-                    TR(TH({colSpan: 3}, "Events")),
+                    TR(TH({colSpan: 4}, "Events")),
                     TR([TH("Date"), TH("Title"), TH("Presenter"), TH()])
                 ]),
                 TBODY([state.events.map(e => TR([
@@ -120,7 +120,7 @@ on("click", ".addsong", async (e) => {
 
 on("click", ".removesong", async (e) => {
     e.preventDefault();
-    sock.send({cmd: "remove_song_use", id: e.match.dataset.id});
+    sock.send({cmd: "remove_song_use", id: e.match.closest_data("id")});
 });
 
 
@@ -140,3 +140,7 @@ on("click", "#newevent", async (e) => {
     const event = await response.json();
     window.location = `/event/${event.id}`;
 });
+
+on("change", "input[name=usage]", (e) => {
+    sock.send({cmd: "update_song_use", [e.match.name]: e.match.value, id: e.match.closest_data("id")})
+})

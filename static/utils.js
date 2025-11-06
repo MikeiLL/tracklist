@@ -9,7 +9,8 @@ const {BUTTON, DIALOG, DIV, FOOTER, H3, HEADER, P, SECTION} = choc; //autoimport
 
 fix_dialogs({
     close_selector: ".dialog_cancel,.dialog_close",
-    click_outside: "formless"
+    click_outside: "formless",
+    methods: 1, // add choc methods to prototype for node objects
 });
 
 function ensure_simpleconfirm_dlg() {

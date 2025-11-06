@@ -201,14 +201,11 @@ ul#library_content li .libraryitem figure figcaption {
     padding: 0.5em 2em;
 }
 
-table.user_admin td {
-    padding: 0.3em;
-    border: 1px solid var(--grey);
-}
+/* TABLES */
 
-table.user_admin thead {
-    background-color: var(--lightgrey);
-    font-weight: bold;
+table td {
+    padding: 0.5em;
+    border: 1px dotted lightgrey;
 }
 
 
