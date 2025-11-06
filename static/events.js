@@ -4,8 +4,8 @@ import {
     on,
     DOM,
 } from "https://rosuav.github.io/choc/factory.js";
-const {BUTTON, FIELDSET, FORM, H2, INPUT, LABEL, LEGEND, LI, PRE, SPAN, TABLE, TBODY, TD, TH, THEAD, TR, UL} = choc; //autoimport
-import {simpleconfirm} from "./utils.js";
+const {A, BUTTON, FIELDSET, FORM, H2, INPUT, LABEL, LEGEND, LI, SPAN, TABLE, TBODY, TD, TH, THEAD, TR, UL} = choc; //autoimport
+import {simpleconfirm, formatdate} from "./utils.js";
 import ws from "./ws.js";
 
 const sock = ws({
@@ -44,7 +44,20 @@ const sock = ws({
             ]);
         }
         if (state.events) {
-            set_content("main", PRE(JSON.stringify(state.events)));
+            set_content("main", TABLE([
+                THEAD([
+                    TR(TH({colSpan: 3}, "Events")),
+                    TR([TH("Date"), TH("Title"), TH("Presenter"), TH()])
+                ]),
+                TBODY([state.events.map(e => TR([
+                        TD(formatdate(e.date)),
+                        TD(e.title),
+                        TD(e.presenter),
+                        TD(A({class: "button", href: `/event/${e.id}`, title: "edit event"}, "edit")),
+                    ])
+                )]),
+                BUTTON({id: "newevent", type: "button"}, "Create Event"),
+            ]));
         }
     }
 })
@@ -108,4 +121,22 @@ on("click", ".addsong", async (e) => {
 on("click", ".removesong", async (e) => {
     e.preventDefault();
     sock.send({cmd: "remove_song_use", id: e.match.dataset.id});
+});
+
+
+on("click", "#newevent", async (e) => {
+    const response = await fetch("/events", {
+        method: "POST",
+        headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            "date": new Date().toISOString(),
+            "description": "",
+            "presenter": ""
+        }),
+    });
+    const event = await response.json();
+    window.location = `/event/${event.id}`;
 });

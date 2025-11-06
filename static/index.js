@@ -10,13 +10,15 @@ import ws from "./ws.js";
 
 const sock = ws({
     render: (state) => {
-        set_content("main", [
-            state.songs && [
-                H2("Recent songs"),
+        set_content("main", DIV({class: "flexrow"},[
+            state.songs && DIV([
+                H2("Songs"),
+                A({href: "/song", title:"see all songs"}, "See all ->"),
                 UL({id: "songs"}, state.songs.map(s => LI([s.title, ' (', s.credits, ')']))),
-            ],
-            state.events && [
-                H2("Recent and coming events"),
+            ]),
+            state.events && DIV([
+                H2("Upcoming Events"),
+                A({href: "/event", title:"see all events"}, "See all ->"),
                 UL({id: "events"}, state.events.map(s => LI(A({
                     href: `/event/${s.id}`,
                     title: "View or edit event."
@@ -27,9 +29,9 @@ const sock = ws({
                     P(s.description),
                     ])
                 )))), // end UL
-                BUTTON({id: "newevent", type: "button"}, "New Event"),
-            ],
-        ]);
+                BUTTON({id: "newevent", type: "button"}, "Create Event"),
+            ]),
+        ]));
     }
 });
 
