@@ -12,7 +12,7 @@ ws({
     render: (state) => {
         set_content("main", [
             state.songs && [
-                TABLE({id: "songs"}, [
+                TABLE({id: "songs-filter"}, [
                     STYLE(),
                     THEAD([
                         TR(TH({colSpan: 4}, "Songs")),
@@ -37,12 +37,12 @@ ws({
     }
 });
 
-on("input", "#songs input", e => {
+on("input", "#songs-filter input", e => {
     let css = "";
-    document.querySelectorAll("#songs input").forEach(i => {
+    document.querySelectorAll("#songs-filter input").forEach(i => {
         if (i.value) {
-            css += "#songs tbody tr:not([data-" + i.name + '*="' + i.value.toLowerCase() + '"]) {display:none}'
+            css += "#songs-filter tbody tr:not([data-" + i.name + '*="' + i.value.toLowerCase() + '"]) {display:none}'
         }
     });
-    set_content("#songs style", css);
+    set_content("#songs-filter style", css);
 });

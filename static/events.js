@@ -4,13 +4,55 @@ import {
     on,
     DOM,
 } from "https://rosuav.github.io/choc/factory.js";
-const {A, BUTTON, FIELDSET, FORM, H2, INPUT, LABEL, LEGEND, LI, PRE, SPAN, TABLE, TBODY, TD, TH, THEAD, TR, UL} = choc; //autoimport
+const {A, BUTTON, DETAILS, FIELDSET, FORM, H2, INPUT, LABEL, LEGEND, SPAN, STYLE, SUMMARY, TABLE, TBODY, TD, TH, THEAD, TR} = choc; //autoimport
 import * as utils from "./utils.js";
 import ws from "./ws.js";
 
+
 const sock = ws({
     render: (state) => {
-        console.log(state)
+        set_content("dialog#main .dlg_content", [
+            H2("Song List"),
+            DETAILS([
+                SUMMARY("Creat new song and add to event"),
+                FORM({id: "newsong"}, [
+                    LABEL([
+                        "Title",
+                        INPUT({name: "title"})
+                    ]),
+                    LABEL([
+                        "Credits",
+                        INPUT({name: "credits"})
+                    ]),
+                    LABEL([
+                        "Usage (offertory, etc)",
+                        INPUT({name: "usage"})
+                    ]),
+                    INPUT({type: "submit"}, "Create/Add"),
+                ])]
+            ),
+            state.all_songs && [
+                TABLE({id: "songs-filter"}, [
+                    STYLE(),
+                    THEAD([
+                        TR(TH({colSpan: 4}, "Songs")),
+                        TR([TH(), TH("Title"), TH("Credits"), TH("Number"),]),
+                        TR([TH(), TH(INPUT({name: "title"})), TH(INPUT({name: "credits"})), TH(INPUT({name: "number"})),]),
+                    ]),
+                    TBODY([state.all_songs.map(s => TR({
+                        "data-title": s.title.toLowerCase(),
+                        "data-credits": s.credits.toLowerCase(),
+                        "data-number": s.id,
+                    }, [
+                        TD(BUTTON({class: "addsong", id: s.id, type: "button"}, "+")),
+                        TD(s.title),
+                        TD(s.credits),
+                        TD(`${s.id}`),
+                    ])
+                    )]),
+                ]),
+            ]
+        ]);
         if (state.event) {
             return set_content("main", [
                 FORM({id: "event"}, [
@@ -67,33 +109,6 @@ on("change", "form#event input", (e) => {
 })
 
 on("click", "button#addsong", async (e) => {
-    const data = await fetch("/songs");
-    const songlist = await data.json();
-    set_content("dialog#main .dlg_content", [
-        H2("Song List"),
-        FORM({id: "newsong"}, [
-                LABEL([
-                    "Title",
-                    INPUT({name: "title"})
-                ]),
-                LABEL([
-                    "Credits",
-                    INPUT({name: "credits"})
-                ]),
-                LABEL([
-                    "Usage (offertory, etc)",
-                    INPUT({name: "usage"})
-                ]),
-                INPUT({type: "submit"}, "Add song"),
-            ]
-        ),
-        songlist && UL({class: "songlist"},[
-            songlist.map(s => LI([
-                BUTTON({class: "addsong", id: s.id, type: "button"}, "+"),
-                s.title, " by ", s.credits,
-            ]))
-        ])
-    ]);
     DOM("dialog#main").showModal();
 });
 
@@ -143,4 +158,14 @@ on("click", "#newevent", async (e) => {
 
 on("change", "input[name=usage]", (e) => {
     sock.send({cmd: "update_song_use", [e.match.name]: e.match.value, id: e.match.closest_data("id")})
-})
+});
+
+on("input", "#songs-filter input", e => {
+    let css = "";
+    document.querySelectorAll("#songs-filter input").forEach(i => {
+        if (i.value) {
+            css += "#songs-filter tbody tr:not([data-" + i.name + '*="' + i.value.toLowerCase() + '"]) {display:none}'
+        }
+    });
+    set_content("#songs-filter style", css);
+});
