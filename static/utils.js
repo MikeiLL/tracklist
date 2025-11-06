@@ -61,5 +61,5 @@ export function formatdate(datetime) {
         6: "Sat",
     }
     const date = new Date(datetime * 1000);
-    return num_to_day[date.getDay()] + " " + date.toISOString().split("T")[0];
+    return num_to_day[date.getUTCDay()] + " " + date.toISOString().split("T")[0];
 }
