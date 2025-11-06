@@ -47,7 +47,7 @@ const sock = ws({
                         TD(BUTTON({class: "addsong", id: s.id, type: "button"}, "+")),
                         TD(s.title),
                         TD(s.credits),
-                        TD(`${s.id}`),
+                        TD(`${s.song_number}`),
                     ])
                     )]),
                 ]),

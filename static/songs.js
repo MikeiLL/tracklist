@@ -26,7 +26,7 @@ ws({
                     }, [
                         TD(s.title),
                         TD(s.credits),
-                        TD(`${s.id}`),
+                        TD(`${s.song_number}`),
                         TD(A({class: "button", href: `/song/${s.id}`, title: "edit song"}, "edit")),
                     ])
                     )]),

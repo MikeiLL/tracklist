@@ -48,6 +48,8 @@ class EventUpdate(EventBase):
 class SongBase(SQLModel):
     title: str = Field(default="Untitled", title="The title of the piece", index=True)
     credits: str = Field(default="Anonymous", title="Author(s), composer(s), etc...", )
+    song_number: int = Field(default=None, title="1, 101, 1024, etc...", )
+    notes: str = Field(default="", title="Arbitrary notes", )
 
 class Song(SongBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
