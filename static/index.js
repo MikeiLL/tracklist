@@ -5,7 +5,7 @@ import {
     DOM,
 } from "https://rosuav.github.io/choc/factory.js";
 const {A, BUTTON, DIV, H2, H3, LI, P, UL} = choc; //autoimport
-import {simpleconfirm, formatdate} from "./utils.js";
+import * as utils from "./utils.js";
 import ws from "./ws.js";
 
 const sock = ws({
@@ -24,7 +24,7 @@ const sock = ws({
                     title: "View or edit event."
                 },
                 DIV({class: "card"}, [
-                    H3([formatdate(s.date), " ", s.title]),
+                    H3([utils.formatdate(s.date), " ", s.title]),
                     P(s.presenter),
                     P(s.description),
                     ])

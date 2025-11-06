@@ -5,7 +5,7 @@ import {
     DOM,
 } from "https://rosuav.github.io/choc/factory.js";
 const {A, BUTTON, FIELDSET, FORM, H2, INPUT, LABEL, LEGEND, LI, PRE, SPAN, TABLE, TBODY, TD, TH, THEAD, TR, UL} = choc; //autoimport
-import {simpleconfirm, formatdate} from "./utils.js";
+import * as utils from "./utils.js";
 import ws from "./ws.js";
 
 const sock = ws({
@@ -50,7 +50,7 @@ const sock = ws({
                     TR([TH("Date"), TH("Title"), TH("Presenter"), TH()])
                 ]),
                 TBODY([state.events.map(e => TR([
-                        TD(formatdate(e.date)),
+                        TD(utils.formatdate(e.date)),
                         TD(e.title),
                         TD(e.presenter),
                         TD(A({class: "button", href: `/event/${e.id}`, title: "edit event"}, "edit")),
