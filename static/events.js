@@ -4,7 +4,7 @@ import {
     on,
     DOM,
 } from "https://rosuav.github.io/choc/factory.js";
-const {A, BUTTON, DETAILS, FIELDSET, FORM, H2, INPUT, LABEL, LEGEND, SPAN, STYLE, SUMMARY, TABLE, TBODY, TD, TEXTAREA, TH, THEAD, TR} = choc; //autoimport
+const {A, BUTTON, DETAILS, DIV, FIELDSET, FORM, H2, INPUT, LABEL, LEGEND, SPAN, STYLE, SUMMARY, TABLE, TBODY, TD, TEXTAREA, TH, THEAD, TR} = choc; //autoimport
 import * as utils from "./utils.js";
 import ws from "./ws.js";
 
@@ -58,26 +58,31 @@ const sock = ws({
                 FORM({id: "event"}, [
                     FIELDSET([
                         LEGEND("Event Details"),
-                        INPUT({
+                        DIV([
+                            LABEL(["Date", INPUT({
                             type: "date", name: "date", value: new Date(state.event.date * 1000)
                                 .toISOString().split("T")[0]
-                        }),
-                        LABEL(["Title", INPUT({type: "text", name:"title", value: state.event.title})]),
-                        LABEL(["Description", INPUT({type: "text", name:"description", value: state.event.description})]),
-                        LABEL(["Presenter", INPUT({type: "text", name:"presenter", value: state.event.presenter})]),
-                        LABEL(["Service Leader", INPUT({type: "text", name:"contact", value: state.event.contact})]),
+                        })]),
+                            LABEL(["Title", INPUT({type: "text", name: "title", value: state.event.title})]),
+                        ]),
+                        DIV([
+                            LABEL(["Presenter", INPUT({type: "text", name: "presenter", value: state.event.presenter})]),
+                            LABEL(["Service Leader", INPUT({type: "text", name: "contact", value: state.event.contact})]),
+                        ]),
+                        LABEL(["Description", TEXTAREA({type: "text", name: "description", value: state.event.description})]),
                     ])
                 ]),
                 FORM({id: "songs"}, [
                     TABLE([
                         THEAD([
-                            TR(TH({colSpan: 4}, "Songs")),
-                            TR([TH("Title"), TH("Credits"), TH("Usage"), TH()])
+                            TR(TH({colSpan: 5}, "Songs")),
+                            TR([TH("Title"), TH("Credits"), TH("Usage"), TH("Notes"), TH()])
                         ]),
                         TBODY([state.songs.map(s => TR({'data-id': s.id},[
                                 TD(SPAN(s.title)),
                                 TD(SPAN(s.credits)),
                                 TD(INPUT({type: "text", name: "usage", value: s.usage})),
+                                TD(INPUT({type: "text", name: "notes", value: s.notes})),
                                 TD(BUTTON({class: "removesong", type: "button"}, "X")),
                             ])
                         )]),
@@ -159,6 +164,10 @@ on("click", "#newevent", async (e) => {
 });
 
 on("change", "input[name=usage]", (e) => {
+    sock.send({cmd: "update_song_use", [e.match.name]: e.match.value, id: e.match.closest_data("id")})
+});
+
+on("change", "input[name=notes]", (e) => {
     sock.send({cmd: "update_song_use", [e.match.name]: e.match.value, id: e.match.closest_data("id")})
 });
 

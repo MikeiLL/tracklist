@@ -73,8 +73,8 @@ class SongUpdate(SongBase):
 class SongUseBase(SQLModel):
     event_id: int = Field(foreign_key="event.id", title="When used?")
     song_id: int = Field(foreign_key="song.id", title="Which piece?")
-    usage: str = Field(default=None, title="Intro, Offertory, Meditation, etc...", )
-    notes: str = Field(default=None, title="Alernate key, instrumentation, etc...", )
+    usage: str | None = Field(default=None, title="Intro, Offertory, Meditation, etc...", )
+    notes: str | None = Field(default=None, title="Alernate key, instrumentation, etc...", )
 
 class SongUse(SongUseBase, table=True):
     id: int | None = Field(default=None, primary_key=True)

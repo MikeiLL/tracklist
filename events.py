@@ -16,7 +16,7 @@ class events(WebSocketHandler):
                 return {"error": "Event not found"}
             event = events[0]
             songs = database.dict_query("""
-                    SELECT title, credits, usage, song_id, songuse.id FROM songuse
+                    SELECT title, credits, usage, song_id, songuse.id, songuse.notes FROM songuse
                         JOIN song on songuse.song_id = song.id
                         WHERE songuse.event_id = %s
             """, (group,))
@@ -44,7 +44,7 @@ class events(WebSocketHandler):
         await self.send_updates_all(sock["ws_group"])
 
     async def sockmsg_update_song_use(self, sock: dict, msg: dict):
-        whitelist = ["usage"]
+        whitelist = ["usage", "notes"]
         usage = msg.get("id")
         if not usage: return
         changes = {k:v for k,v in msg.items() if k in whitelist}

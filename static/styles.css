@@ -218,6 +218,29 @@ table td {
     border: 1px dotted lightgrey;
 }
 
+/*
+ *
+ FORMS
+*/
+
+form#event fieldset {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 1em;
+}
+
+form#event fieldset label {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: flex-end;
+    margin: 0.5em 0;
+    width: fit-content;
+}
+
+form#event fieldset>div {
+    gap: 1em;
+}
 
 form#libraryadmin fieldset {
     width: fit-content;
