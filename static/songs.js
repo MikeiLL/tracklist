@@ -4,7 +4,7 @@ import {
     on,
     DOM,
 } from "https://rosuav.github.io/choc/factory.js";
-const {A, BUTTON, FIELDSET, FORM, INPUT, LABEL, STYLE, TABLE, TBODY, TD, TEXTAREA, TH, THEAD, TR} = lindt; //autoimport
+const {A, BUTTON, DIV, FIELDSET, FORM, INPUT, LABEL, STYLE, TABLE, TBODY, TD, TEXTAREA, TH, THEAD, TR} = lindt; //autoimport
 import * as utils from "./utils.js";
 import ws from "./ws.js";
 
@@ -20,8 +20,19 @@ const sock = ws({
                 INPUT({type: "submit", class: "button"}, "Submit")]),
             ]),
         ]);
-        replace_content("main", [
-            !state.song && BUTTON({id: "newsong", type: "button"}, "New song"),
+        replace_content("main", [,
+            state.song && [
+                DIV({class: "notifications hidden"}),
+                FORM({id: "editsongform", "data-id": state.song.id},[
+                    FIELDSET([
+                        LABEL(["Title", INPUT({type: "text", name: "title", value: state.song.title})]),
+                        LABEL(["Credits", INPUT({type: "text", name: "credits", value: state.song.credits})]),
+                        LABEL(["Number", INPUT({type: "number", name: "song_number", value: state.song.song_number})]),
+                        LABEL(["Notes", TEXTAREA({type: "text", name: "notes", value: state.song.notes})]),
+                    ]),
+                ]),
+            ],
+            BUTTON({id: "newsong", type: "button"}, `${state.song ? "Add another" : "New"} song`),
             state.songs && [
                 TABLE({id: "songs-filter"}, [
                     STYLE(),
@@ -45,20 +56,17 @@ const sock = ws({
                     )]),
                 ]),
             ],
-            state.song && [
-                FORM({id: "editsongform", "data-id": state.song.id},[
-                    FIELDSET([
-                        LABEL(["Title", INPUT({type: "text", name: "title", value: state.song.title})]),
-                        LABEL(["Credits", INPUT({type: "text", name: "credits", value: state.song.credits})]),
-                        LABEL(["Number", INPUT({type: "number", name: "song_number", value: state.song.song_number})]),
-                        LABEL(["Notes", TEXTAREA({type: "text", name: "notes", value: state.song.notes})]),
-                    ]),
-                ]),
-            ],
         ]);
     },
     sockmsg_song_created: (msg) => {
         window.location = `/song/${msg.id}`;
+    },
+    sockmsg_song_updated: (msg) => {
+        console.log(Object.entries(msg.changes));
+        replace_content(".notifications",
+            Object.keys(msg.changes).map(
+                k => k + " updated")
+        ).classList.remove("hidden");
     }
 });
 

@@ -27,6 +27,7 @@ class songs(WebSocketHandler):
         changes = {k:v for k,v in msg.items() if k in whitelist}
         if changes: database.query("UPDATE song SET " + ",".join(k + "=%s" for k in changes) + " WHERE id = %s", (*changes.values(), int(usage)))
         await self.send_updates_all(sock["ws_group"])
+        return {"cmd": "song_updated", "changes": changes}
 
     async def sockmsg_create_song(self, sock: dict, msg: dict):
         res = database.query("INSERT INTO song (title) VALUES ('') RETURNING id")

@@ -7,6 +7,9 @@
     --brandprimarylight: rgb(214, 160, 240);
     --brandprimarydark: rgb(83, 38, 106);
     --brandsecondary: rgb(234, 92, 147);
+    --notification: green;
+    --warning: yellow;
+    --alert: red;
     --black: rgb(61, 61, 59);
     --white: rgb(246, 245, 207);
     --lightgrey: lightgrey;
@@ -267,6 +270,20 @@ ul.songlist li {
     display: flex;
     gap: 1em;
     margin: 0.5em 0;
+}
+
+/*
+ NOTIFICATIONS
+*/
+
+div.notifications {
+    border: 1px solid var(--notification);
+    border-radius: 5px;
+    padding: 1em;
+}
+
+div.notifications.hidden {
+    border: none;
 }
 
 /*
