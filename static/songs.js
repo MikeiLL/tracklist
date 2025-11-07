@@ -16,10 +16,10 @@ ws({
                     STYLE(),
                     THEAD([
                         TR(TH({colSpan: 4}, "Songs")),
-                        TR([TH("Title"), TH("Credits"), TH("Number"), TH()]),
-                        TR([TH(INPUT({name: "title"})), TH(INPUT({name: "credits"})), TH(INPUT({name: "number"})), TH()]),
+                        TR([TH("Title"), TH("Credits"), TH("Number"), TH("Number"), TH()]),
+                        TR([TH(INPUT({name: "title"})), TH(INPUT({name: "credits"})), TH(INPUT({name: "number"})), TH(INPUT({name: "notes"})), TH()]),
                     ]),
-                    TBODY([state.songs.map(s => TR({
+                    TBODY([state.songs.map(s => [TR({
                         "data-title": s.title.toLowerCase(),
                         "data-credits": s.credits.toLowerCase(),
                         "data-number": s.id,
@@ -28,9 +28,11 @@ ws({
                         TD(s.credits),
                         TD(`${s.song_number}`),
                         TD(A({class: "button", href: `/song/${s.id}`, title: "edit song"}, "edit")),
-                    ])
+                    ]),
+                        TR(TD({colSpan: 4}, s.notes)),
+                    ]
                     )]),
-                    BUTTON({id: "newevent", type: "button"}, "TODO add song"),
+                    BUTTON({id: "newsong", type: "button"}, "New song"),
                 ]),
             ],
         ]);
@@ -45,4 +47,8 @@ on("input", "#songs-filter input", e => {
         }
     });
     set_content("#songs-filter style", css);
+});
+
+on("click", ".newsong", async (e) => {
+    console.log("TODO - open dlg to create song");
 });
