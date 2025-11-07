@@ -21,6 +21,7 @@ async def websocket_route(websocket: WebSocket):
     ws_type = ws_group = None
     authorization: str = websocket.cookies.get("tracklist_access_token")
     scheme, token = authorization.split(" ")
+    conn = {"sock": websocket}
     await websocket.accept()
     try:
         while True:
@@ -38,15 +39,15 @@ async def websocket_route(websocket: WebSocket):
                     await mgr.send_message(json.dumps({"cmd": "error", "message": "Invalid credentials"}), websocket)
                     await websocket.close()
                     return
-                mgr.set_group(websocket, ws_group)
+                mgr.set_group(conn, ws_group)
                 state = await mgr.get_state(ws_group)
                 state['cmd'] = "update"
-                await mgr.send_message(json.dumps(state), websocket)
+                await mgr.send_message(json.dumps(state), conn)
             if "cmd" not in message: continue
             handler = getattr(mgr, "sockmsg_" + message["cmd"], None)
             if handler:
                 try:
-                    res = await handler(locals(), message) #hack
+                    res = await handler(conn, message)
                 except:
                     print("Error in ws handler", ws_type, ws_group, handler)
                     traceback.print_exc()

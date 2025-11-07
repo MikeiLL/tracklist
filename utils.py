@@ -113,25 +113,28 @@ class WebSocketHandler:
 
     def __init__(self):
         self.groups = defaultdict(list)
+        self.type = type(self).__name__ # events, songs, etc
 
     def __init_subclass__(cls):
         ws_managers[cls.__name__] = cls()
 
-    def set_group(self, websocket, group):
-        self.groups[group].append(websocket)
+    def set_group(self, conn, group):
+        conn["ws_type"] = self.type
+        conn["ws_group"] = group
+        self.groups[group].append(conn)
 
-    def remove_from_group(self, websocket, group):
+    def remove_from_group(self, conn, group):
         try:
-            self.groups[group].remove(websocket)
+            self.groups[group].remove(conn)
         except ValueError:
             pass
 
-    async def send_message(self, message: str, websocket: WebSocket):
-        await websocket.send_text(message)
+    async def send_message(self, message: str, conn: dict):
+        await conn["sock"].send_text(message)
 
     async def broadcast(self, group, message: str):
         for conn in self.groups[group]:
-            await conn.send_text(message)
+            await conn["sock"].send_text(message)
 
     async def send_updates_all(self, group):
         state = await self.get_state(group)
