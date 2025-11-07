@@ -27,17 +27,17 @@ const sock = ws({
                     THEAD([
                         TR(TH({colSpan: 5}, "Songs")),
                         TR([TH("Title"), TH("Credits"), TH("Number"), TH("Notes"), TH()]),
-                        TR([TH(INPUT({name: "title"})), TH(INPUT({name: "credits"})), TH(INPUT({name: "number"})), TH(INPUT({name: "notes"})), TH(INPUT({name: "notes"})), TH()]),
+                        TR([TH(INPUT({name: "title"})), TH(INPUT({name: "credits"})), TH(INPUT({name: "number"})), TH({colSpan: 2})]),
                     ]),
                     TBODY([state.songs.map(s => [TR({
                         "data-title": s.title.toLowerCase(),
                         "data-credits": s.credits.toLowerCase(),
-                        "data-number": s.id,
+                        "data-number": s.song_number,
                     }, [
                         TD(s.title),
                         TD(s.credits),
                         TD(`${s.song_number}`),
-                        TR(TD(s.notes)),
+                        TD(s.notes),
                         TD(A({class: "button", href: `/song/${s.id}`, title: "edit song"}, "edit")),
                     ]),
                     ]
@@ -58,6 +58,8 @@ const sock = ws({
         ]);
     }
 });
+
+
 
 on("input", "#songs-filter input", e => {
     let css = "";
