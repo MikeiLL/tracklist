@@ -36,13 +36,13 @@ async def websocket_route(websocket: WebSocket):
                 try:
                     user = await utils.get_current_user(token)
                 except utils.InvalidCredentialsError:
-                    await mgr.send_message(json.dumps({"cmd": "error", "message": "Invalid credentials"}), websocket)
+                    await mgr.send_message(conn, json.dumps({"cmd": "error", "message": "Invalid credentials"}))
                     await websocket.close()
                     return
                 mgr.set_group(conn, ws_group)
                 state = await mgr.get_state(ws_group)
                 state['cmd'] = "update"
-                await mgr.send_message(json.dumps(state), conn)
+                await mgr.send_message(conn, json.dumps(state))
             if "cmd" not in message: continue
             handler = getattr(mgr, "sockmsg_" + message["cmd"], None)
             if handler:
@@ -52,8 +52,8 @@ async def websocket_route(websocket: WebSocket):
                     print("Error in ws handler", ws_type, ws_group, handler)
                     traceback.print_exc()
                 else:
-                    if isinstance(res, dict): await mgr.send_message(json.dumps(res), websocket)
+                    if isinstance(res, dict): await mgr.send_message(conn, json.dumps(res))
     except WebSocketDisconnect:
         await websocket.close()
     finally:
-        if mgr: mgr.remove_from_group(websocket, ws_group)
+        if mgr: mgr.remove_from_group(conn, ws_group)

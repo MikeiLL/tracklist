@@ -129,7 +129,7 @@ class WebSocketHandler:
         except ValueError:
             pass
 
-    async def send_message(self, message: str, conn: dict):
+    async def send_message(self, conn: dict, message: str):
         await conn["sock"].send_text(message)
 
     async def broadcast(self, group, message: str):
