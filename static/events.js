@@ -41,7 +41,7 @@ const sock = ws({
                     ]),
                     TBODY([state.all_songs.map(s => TR({
                         "data-title": s.title.toLowerCase(),
-                        "data-credits": s.credits.toLowerCase(),
+                        "data-credits": (s.credits || "").toLowerCase(),
                         "data-number": s.song_number,
                     }, [
                         TD(BUTTON({class: "addsong", id: s.id, type: "button"}, "+")),

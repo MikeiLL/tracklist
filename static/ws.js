@@ -33,6 +33,7 @@ export default (methods) => {
         ws.onmessage = (e) => {
             let data = JSON.parse(e.data)
             if (data.cmd === "update") return methods.render(data);
+            else if (methods["sockmsg_" + data.cmd]) methods["sockmsg_" + data.cmd](data);
             console.log(data);
         }
         ws.onclose = async () => {

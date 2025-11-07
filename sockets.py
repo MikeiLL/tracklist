@@ -46,10 +46,12 @@ async def websocket_route(websocket: WebSocket):
             handler = getattr(mgr, "sockmsg_" + message["cmd"], None)
             if handler:
                 try:
-                    await handler(locals(), message) #hack
+                    res = await handler(locals(), message) #hack
                 except:
                     print("Error in ws handler", ws_type, ws_group, handler)
                     traceback.print_exc()
+                else:
+                    if isinstance(res, dict): await mgr.send_message(json.dumps(res), websocket)
     except WebSocketDisconnect:
         await websocket.close()
     finally:

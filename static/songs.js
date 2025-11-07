@@ -1,17 +1,17 @@
 import {
-    choc,
-    set_content,
+    lindt,
+    replace_content,
     on,
     DOM,
 } from "https://rosuav.github.io/choc/factory.js";
-const {A, BUTTON, FIELDSET, FORM, INPUT, LABEL, STYLE, TABLE, TBODY, TD, TEXTAREA, TH, THEAD, TR} = choc; //autoimport
+const {A, BUTTON, FIELDSET, FORM, INPUT, LABEL, STYLE, TABLE, TBODY, TD, TEXTAREA, TH, THEAD, TR} = lindt; //autoimport
 import * as utils from "./utils.js";
 import ws from "./ws.js";
 
 const sock = ws({
     render: (state) => {
-        set_content("dialog#main .dlg_header h2", "Add Song");
-        set_content("dialog#main .dlg_content", [
+        replace_content("dialog#main .dlg_header h2", "Add Song");
+        replace_content("dialog#main .dlg_content", [
             FORM({id: "editsongform"}, [
                 FIELDSET([LABEL(["Title", INPUT({type: "text", name: "title"})]),
                 LABEL(["Credits", INPUT({type: "text", name: "credits"})]),
@@ -20,7 +20,7 @@ const sock = ws({
                 INPUT({type: "submit", class: "button"}, "Submit")]),
             ]),
         ]);
-        set_content("main", [
+        replace_content("main", [
             state.songs && [
                 TABLE({id: "songs-filter"}, [
                     STYLE(),
@@ -31,12 +31,12 @@ const sock = ws({
                     ]),
                     TBODY([state.songs.map(s => [TR({
                         "data-title": s.title.toLowerCase(),
-                        "data-credits": s.credits.toLowerCase(),
+                        "data-credits": (s.credits || "").toLowerCase(),
                         "data-number": s.song_number,
                     }, [
                         TD(s.title),
                         TD(s.credits),
-                        TD(`${s.song_number}`),
+                        TD(`${s.song_number  || ""}`),
                         TD(s.notes),
                         TD(A({class: "button", href: `/song/${s.id}`, title: "edit song"}, "edit")),
                     ]),
@@ -56,6 +56,9 @@ const sock = ws({
                 ]),
             ],
         ]);
+    },
+    sockmsg_song_created: (msg) => {
+        window.location = `/song/${msg.id}`;
     }
 });
 
@@ -68,13 +71,15 @@ on("input", "#songs-filter input", e => {
             css += "#songs-filter tbody tr:not([data-" + i.name + '*="' + i.value.toLowerCase() + '"]) {display:none}'
         }
     });
-    set_content("#songs-filter style", css);
+    replace_content("#songs-filter style", css);
 });
 
-on("click", "#newsong", async (e) => {
-    DOM("dialog#main").showModal();
+on("click", "#newsong", async () => {
+    sock.send({cmd: "create_song"});
 });
+
+
 
 on("change", "#editsongform input, #editsongform textarea", e => {
-    sock.send({cmd: "edit_song", id: e.match.closest_data("id"), [e.match.name]: e.match.value})
+    sock.send({cmd: "edit_song", id: e.match.closest_data("id"), [e.match.name]: e.match.value});
 })
