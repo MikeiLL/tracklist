@@ -4,7 +4,7 @@ import {
     on,
     DOM,
 } from "https://rosuav.github.io/choc/factory.js";
-const {A, BUTTON, DETAILS, FIELDSET, FORM, H2, INPUT, LABEL, LEGEND, SPAN, STYLE, SUMMARY, TABLE, TBODY, TD, TH, THEAD, TR} = choc; //autoimport
+const {A, BUTTON, DETAILS, FIELDSET, FORM, H2, INPUT, LABEL, LEGEND, SPAN, STYLE, SUMMARY, TABLE, TBODY, TD, TEXTAREA, TH, THEAD, TR} = choc; //autoimport
 import * as utils from "./utils.js";
 import ws from "./ws.js";
 
@@ -65,6 +65,7 @@ const sock = ws({
                         LABEL(["Title", INPUT({type: "text", name:"title", value: state.event.title})]),
                         LABEL(["Description", INPUT({type: "text", name:"description", value: state.event.description})]),
                         LABEL(["Presenter", INPUT({type: "text", name:"presenter", value: state.event.presenter})]),
+                        LABEL(["Service Leader", INPUT({type: "text", name:"contact", value: state.event.contact})]),
                     ])
                 ]),
                 FORM({id: "songs"}, [
@@ -88,13 +89,14 @@ const sock = ws({
         if (state.events) {
             set_content("main", TABLE([
                 THEAD([
-                    TR(TH({colSpan: 4}, "Events")),
-                    TR([TH("Date"), TH("Title"), TH("Presenter"), TH()])
+                    TR(TH({colSpan: 5}, "Events")),
+                    TR([TH("Date"), TH("Title"), TH("Presenter"), TH("Service Leader"), TH()])
                 ]),
                 TBODY([state.events.map(e => TR([
                         TD(utils.formatdate(e.date)),
                         TD(e.title),
                         TD(e.presenter),
+                        TD(e.contact),
                         TD(A({class: "button", href: `/event/${e.id}`, title: "edit event"}, "edit")),
                     ])
                 )]),
