@@ -62,7 +62,6 @@ const sock = ws({
         window.location = `/song/${msg.id}`;
     },
     sockmsg_song_updated: (msg) => {
-        console.log(Object.entries(msg.changes));
         replace_content(".notifications",
             Object.keys(msg.changes).map(
                 k => k + " updated")

@@ -30,8 +30,8 @@ class events(WebSocketHandler):
     async def sockmsg_updateevent(self, sock: dict, msg: dict):
         whitelist = ["presenter", "title", "description", "date", "contact"]
         changes = {k:v for k,v in msg.items() if k in whitelist}
-        print(changes)
         if changes: database.query("UPDATE event SET " + ",".join(k + "=%s" for k in changes) + " WHERE id = %s", (*changes.values(), sock["ws_group"]))
+        return {"cmd": "event_updated", "changes": changes}
 
     async def sockmsg_add_song_use(self, sock: dict, msg: dict):
         songuse = database.query("""

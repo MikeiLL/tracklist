@@ -55,6 +55,7 @@ const sock = ws({
         ]);
         if (state.event) {
             return set_content("main", [
+                DIV({class: "notifications hidden"}),
                 FORM({id: "event"}, [
                     FIELDSET([
                         LEGEND("Event Details"),
@@ -122,6 +123,12 @@ const sock = ws({
                 )]),
             ])]);
         }
+    },
+    sockmsg_event_updated: (msg) => {
+        set_content(".notifications",
+            Object.keys(msg.changes).map(
+                k => k + " updated")
+        ).classList.remove("hidden");
     }
 })
 
