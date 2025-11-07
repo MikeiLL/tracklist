@@ -34,7 +34,7 @@
     <header role="banner">
         <div id="branding_nav">
             <div class="topbar">
-                <a href="/">Track List</a>
+                <a href="/">HOME</a>
                 <div class="user">
                     {% if user.username %}
                     Logged in as {{ user.username }}
@@ -44,14 +44,9 @@
         </div>
         <nav>
             <ul>
-                {% if user.user_level %}
-                {% if user.user_level >= 2 %}
-                <li><a href="/admin/users">Users</a></li>
-                <li><a href="/tracks">Your Song Dashboard</a></li>
-                {% else %}
-                <li><a href="/tracks">Dashboard</a></li>
-                {% endif %}
-                {% endif %}
+                <li><a href="/song">Songs</a></li>
+                <li><a href="/event">Events</a></li>
+                <li><a href="/docs">Admin</a></li>
             </ul>
         </nav>
     </header>
