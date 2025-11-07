@@ -92,20 +92,31 @@ const sock = ws({
             ]);
         }
         if (state.events) {
-            set_content("main", TABLE([
+            set_content("main", TABLE({id: "events-filter"}, [
+                STYLE(),
                 THEAD([
                     TR(TH({colSpan: 5}, "Events")),
                     TR([TH("Date"), TH("Title"), TH("Presenter"), TH("Service Leader"), TH()]),
                     TR([TH(INPUT({name: "date"})), TH(INPUT({name: "title"})), TH(INPUT({name: "presenter"})), TH(INPUT({name: "contact"})), TH()]),
                 ]),
-                TBODY([state.events.map(e => [TR([
+                TBODY([state.events.map(e => [TR({
+                    "data-date": utils.formatdate(e.date),
+                    "data-title": (e.title || "").toLowerCase(),
+                    "data-presenter": (e.presenter || "").toLowerCase(),
+                    "data-contact": (e.contact || "").toLowerCase(),
+                },[
                         TD(utils.formatdate(e.date)),
                         TD(e.title),
                         TD(e.presenter),
                         TD(e.contact),
                         TD(A({class: "button", href: `/event/${e.id}`, title: "edit event"}, "edit")),
                     ]),
-                    TR(TD({colSpan: 5},[SPAN("description: "), e.description])),],
+                    TR({
+                        "data-date": utils.formatdate(e.date),
+                        "data-title": (e.title || "").toLowerCase(),
+                        "data-presenter": (e.presenter || "").toLowerCase(),
+                        "data-contact": (e.contact || "").toLowerCase(),
+                    },TD({colSpan: 5},[SPAN("description: "), e.description])),],
                 )]),
                 BUTTON({id: "newevent", type: "button"}, "Create Event"),
             ]));
@@ -181,4 +192,14 @@ on("input", "#songs-filter input", e => {
         }
     });
     set_content("#songs-filter style", css);
+});
+
+on("input", "#events-filter input", e => {
+    let css = "";
+    document.querySelectorAll("#events-filter input").forEach(i => {
+        if (i.value) {
+            css += "#events-filter tbody tr:not([data-" + i.name + '*="' + i.value.toLowerCase() + '"]) {display:none}'
+        }
+    });
+    set_content("#events-filter style", css);
 });
