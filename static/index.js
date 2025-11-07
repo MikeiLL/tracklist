@@ -14,7 +14,7 @@ const sock = ws({
             state.songs && DIV({class:"card"}, [
                 H2("Songs"),
                 A({href: "/song", title:"see all songs"}, "See all ->"),
-                UL({id: "songs"}, state.songs.map(s => LI([s.title, ' (', s.credits, ')']))),
+                UL({id: "songs"}, state.songs.map(s => LI(A({href:`/song/${s.id}`, title:"view/edit song"},[s.title, ' (', s.credits, ')'])))),
             ]),
             state.events && DIV({class:"card"}, [
                 H2("Upcoming Events"),

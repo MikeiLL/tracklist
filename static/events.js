@@ -69,7 +69,7 @@ const sock = ws({
                             LABEL(["Presenter", INPUT({type: "text", name: "presenter", value: state.event.presenter})]),
                             LABEL(["Service Leader", INPUT({type: "text", name: "contact", value: state.event.contact})]),
                         ]),
-                        LABEL(["Description", TEXTAREA({type: "text", name: "description", value: state.event.description})]),
+                        LABEL(["Notes/Description", TEXTAREA({type: "text", name: "description", value: state.event.description})]),
                     ])
                 ]),
                 FORM({id: "songs"}, [
@@ -95,15 +95,17 @@ const sock = ws({
             set_content("main", TABLE([
                 THEAD([
                     TR(TH({colSpan: 5}, "Events")),
-                    TR([TH("Date"), TH("Title"), TH("Presenter"), TH("Service Leader"), TH()])
+                    TR([TH("Date"), TH("Title"), TH("Presenter"), TH("Service Leader"), TH()]),
+                    TR([TH(INPUT({name: "date"})), TH(INPUT({name: "title"})), TH(INPUT({name: "presenter"})), TH(INPUT({name: "contact"})), TH()]),
                 ]),
-                TBODY([state.events.map(e => TR([
+                TBODY([state.events.map(e => [TR([
                         TD(utils.formatdate(e.date)),
                         TD(e.title),
                         TD(e.presenter),
                         TD(e.contact),
                         TD(A({class: "button", href: `/event/${e.id}`, title: "edit event"}, "edit")),
-                    ])
+                    ]),
+                    TR(TD({colSpan: 5},[SPAN("description: "), e.description])),],
                 )]),
                 BUTTON({id: "newevent", type: "button"}, "Create Event"),
             ]));
@@ -111,7 +113,7 @@ const sock = ws({
     }
 })
 
-on("change", "form#event input", (e) => {
+on("change", "form#event input, form#event textarea", (e) => {
     sock.send({cmd: "updateevent", [e.match.name]: e.match.value});
 })
 
