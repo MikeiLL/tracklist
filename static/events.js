@@ -92,7 +92,9 @@ const sock = ws({
             ]);
         }
         if (state.events) {
-            set_content("main", TABLE({id: "events-filter"}, [
+            set_content("main", [
+                BUTTON({id: "newevent", type: "button"}, "Create Event"),
+                TABLE({id: "events-filter"}, [
                 STYLE(),
                 THEAD([
                     TR(TH({colSpan: 5}, "Events")),
@@ -118,8 +120,7 @@ const sock = ws({
                         "data-contact": (e.contact || "").toLowerCase(),
                     },TD({colSpan: 5},[SPAN("description: "), e.description])),],
                 )]),
-                BUTTON({id: "newevent", type: "button"}, "Create Event"),
-            ]));
+            ])]);
         }
     }
 })
