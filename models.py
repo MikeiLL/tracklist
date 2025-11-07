@@ -20,6 +20,7 @@ class EventBase(SQLModel):
     title: str | None = Field(default="To be determined", title="The name or title of the event", )
     description: str | None = Field()
     presenter: str | None = Field(default=None, title="Is there someone associated with this event", )
+    contact: str | None = Field(default=None, title="Contact, point, service leader", )
 
     def json(self, **kwargs):
         dict_data = self.model_dump()
