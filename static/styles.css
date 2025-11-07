@@ -230,7 +230,8 @@ form#event fieldset {
     gap: 1em;
 }
 
-form#event fieldset label {
+form#event fieldset label,
+form#editsongform fieldset label {
     display: flex;
     flex-direction: column-reverse;
     align-items: flex-end;
