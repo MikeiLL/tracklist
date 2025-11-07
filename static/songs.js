@@ -10,6 +10,7 @@ import ws from "./ws.js";
 
 const sock = ws({
     render: (state) => {
+        set_content("dialog#main .dlg_header h2", "Add Song");
         set_content("dialog#main .dlg_content", [
             FORM({id: "editsongform"}, [
                 FIELDSET([LABEL(["Title", INPUT({type: "text", name: "title"})]),

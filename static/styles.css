@@ -283,7 +283,7 @@ dialog#simpleconfirmdlg header {
 }
 
 dialog#simpleconfirmdlg footer,
-#dlg_header {
+.dlg_header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
