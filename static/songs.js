@@ -21,6 +21,7 @@ const sock = ws({
             ]),
         ]);
         replace_content("main", [
+            !state.song && BUTTON({id: "newsong", type: "button"}, "New song"),
             state.songs && [
                 TABLE({id: "songs-filter"}, [
                     STYLE(),
@@ -42,7 +43,6 @@ const sock = ws({
                     ]),
                     ]
                     )]),
-                    BUTTON({id: "newsong", type: "button"}, "New song"),
                 ]),
             ],
             state.song && [
