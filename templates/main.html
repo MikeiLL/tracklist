@@ -9,14 +9,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {% block stylesheets %}
     <!-- Different styles for admin, for visibility -->
-    <link href="/static/styles.css" rel=stylesheet type="text/css">
+    <link href="{{'styles.css' | static}}" rel=stylesheet type="text/css">
     {% endblock %}
     <meta charset="UTF-8">
     <link rel="icon" href="/static/images/favicon.png">
     {% block load_scripts %}
     <script src="{{ 'main.js' | static }}" type="module"></script>
     {% if module %}
-    <script src="/static/{{module}}.js" type="module"></script>
+    <script src="{{(module + '.js') | static}}" type="module"></script>
     <script>
         let ws_type = {{ws_type | tojson}};
         let ws_group = {{ws_group | tojson}};
