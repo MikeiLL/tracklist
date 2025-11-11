@@ -14,11 +14,7 @@
     <meta charset="UTF-8">
     <link rel="icon" href="/static/images/favicon.png">
     {% block load_scripts %}
-    {% if cache_bust %}
-    <script src="/static/{{ cache_bust('main.js') }}" type="module"></script>
-    {% else %}
-    <script src="/static/main.js" type="module"></script>
-    {% endif %}
+    <script src="{{ 'main.js' | static }}" type="module"></script>
     {% if module %}
     <script src="/static/{{module}}.js" type="module"></script>
     <script>

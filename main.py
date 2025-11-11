@@ -9,6 +9,7 @@ from sqlmodel import Session, select
 from fastapi.security import OAuth2PasswordRequestForm
 from datetime import timedelta
 import os
+import random
 
 
 from dotenv import load_dotenv
@@ -52,18 +53,14 @@ async def add_process_time_header(request: Request, call_next):
 def on_startup():
     models.create_db_and_tables()
 
-""" TODO:
-https://github.com/tmkontra/fastapi-static-digest maybe
-def cache_bust(filename):
-    stat = os.stat('static/' + filename)
-    return f"{filename}?mtime={stat.st_mtime}"
-
-app.temlating.jinja_env.globals.update(cache_bust=cache_bust) """
-
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-
 templates = Jinja2Templates(directory="templates")
+
+# TODO: Get an inotify watch on the static/ directory, and on any CLOSE_WRITE,
+#regenerate cache_buster
+cache_buster = hex(random.randrange(0x100000, 0x1000000))[2:]
+templates.env.filters["static"] = lambda fn: "/static/" + fn + "?x=" + cache_buster
 
 def get_session():
     with Session(models.engine) as session:
