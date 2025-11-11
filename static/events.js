@@ -14,7 +14,7 @@ const sock = ws({
         set_content("dialog#main .dlg_content", [
             H2("Song List"),
             DETAILS([
-                SUMMARY("Creat new song and add to event"),
+                SUMMARY("Create new song and add to event"),
                 FORM({id: "newsong"}, [
                     LABEL([
                         "Title",
