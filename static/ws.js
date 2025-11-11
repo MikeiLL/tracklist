@@ -15,7 +15,9 @@ function getCookie(name) {
 export default (methods) => {
     let connected = false;
     function reconnect() {
-        ws = new WebSocket("/ws");
+        const url = new URL("/ws", location);
+        url.protocol = url.protocol === "https:" ? "wss:" : "ws:"
+        ws = new WebSocket(url)
         ws.onopen = async () => {
             console.log("websocket connected");
             connected = true;
