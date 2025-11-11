@@ -5,7 +5,7 @@ import {
     DOM,
 } from "https://rosuav.github.io/choc/factory.js";
 const {A, BUTTON, FIELDSET, FORM, H2, H3, H4, INPUT, LABEL, LEGEND, P, TD, IMG, SPAN} = choc; //autoimport
-import {simpleconfirm} from "./utils.js";
+import {simpleconfirm} from "./utils.js$$cachebust$$";
 
 const PURCHASE = {
   price_id: null,

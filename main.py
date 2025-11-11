@@ -2,13 +2,17 @@ from typing import Annotated
 
 from fastapi import FastAPI, Query, Depends, HTTPException, Request, status, Response
 from fastapi.responses import HTMLResponse
-from fastapi.staticfiles import StaticFiles
+from starlette.staticfiles import StaticFiles, NotModifiedResponse
+from starlette import datastructures
+from starlette.responses import FileResponse
+import anyio
 from fastapi.templating import Jinja2Templates
 from datetime import datetime
 from sqlmodel import Session, select
 from fastapi.security import OAuth2PasswordRequestForm
 from datetime import timedelta
 import os
+import stat
 import random
 
 
@@ -28,6 +32,40 @@ ACCESS_TOKEN_EXPIRE_MINUTES = int(os.environ["ACCESS_TOKEN_EXPIRE_MINUTES"])
 app = FastAPI()
 
 app.include_router(sockets.router)
+
+class FileResponse(FileResponse):
+    async def __call__(self, scope, receive, send):
+        if not self.path.endswith(".js"): return await super().__call__(scope, receive, send)
+        if self.stat_result is None:
+            try:
+                stat_result = await anyio.to_thread.run_sync(os.stat, self.path)
+                self.set_stat_headers(stat_result)
+            except FileNotFoundError:
+                raise RuntimeError(f"File at path {self.path} does not exist.")
+            else:
+                mode = stat_result.st_mode
+                if not stat.S_ISREG(mode):
+                    raise RuntimeError(f"File at path {self.path} is not a file.")
+        else:
+            stat_result = self.stat_result
+        await send({"type": "http.response.start", "status": self.status_code, "headers": self.raw_headers})
+        if scope["method"].upper() == "HEAD":
+            await send({"type": "http.response.body", "body": b"", "more_body": False})
+        else:
+            async with await anyio.open_file(self.path, mode="rb") as file:
+                data = await file.read()
+            data = data.replace(b"$$cachebust$$", b"?cache=" + cache_buster.encode())
+            await send({"type": "http.response.body", "body": data, "more_body": False})
+
+
+class StaticFiles(StaticFiles):
+    # TODO: If/when the cache bust tag changes, redefine is_not_modified accordingly
+    def file_response(self, path, stat, scope, status=200):
+        headers = datastructures.Headers(scope=scope)
+        resp = FileResponse(path, status_code=status, stat_result=stat)
+        if self.is_not_modified(resp.headers, headers): # and cache_buster hasn't changed (check ETag?)
+            return NotModifiedResponse(resp.headers)
+        return resp
 
 @app.middleware("http")
 async def add_process_time_header(request: Request, call_next):
@@ -60,7 +98,7 @@ templates = Jinja2Templates(directory="templates")
 # TODO: Get an inotify watch on the static/ directory, and on any CLOSE_WRITE,
 #regenerate cache_buster
 cache_buster = hex(random.randrange(0x100000, 0x1000000))[2:]
-templates.env.filters["static"] = lambda fn: "/static/" + fn + "?x=" + cache_buster
+templates.env.filters["static"] = lambda fn: "/static/" + fn + "?cache=" + cache_buster
 
 def get_session():
     with Session(models.engine) as session:

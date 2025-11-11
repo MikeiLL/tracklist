@@ -5,9 +5,8 @@ import {
     DOM,
 } from "https://rosuav.github.io/choc/factory.js";
 const {FIELDSET, FORM, INPUT, LABEL, LEGEND} = choc; //autoimport
-import {simpleconfirm} from "./utils.js";
-import ws from "./ws.js";
-
+import {simpleconfirm} from "./utils.js$$cachebust$$";
+import ws from "./ws.js$$cachebust$$";
 ws({
     render: (state) => {
         set_content("main", [

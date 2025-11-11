@@ -5,8 +5,8 @@ import {
     DOM,
 } from "https://rosuav.github.io/choc/factory.js";
 const {A, BUTTON, DETAILS, DIV, FIELDSET, FORM, H2, INPUT, LABEL, LEGEND, SPAN, STYLE, SUMMARY, TABLE, TBODY, TD, TEXTAREA, TH, THEAD, TR} = choc; //autoimport
-import * as utils from "./utils.js";
-import ws from "./ws.js";
+import * as utils from "./utils.js$$cachebust$$";
+import ws from "./ws.js$$cachebust$$";
 
 
 const sock = ws({
