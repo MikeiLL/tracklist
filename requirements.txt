@@ -2,6 +2,6 @@ fastapi
 fastapi[standard]
 sqlmodel
 pydantic-settings
-psycopg2
+psycopg2-binary
 pyjwt
 bcrypt
