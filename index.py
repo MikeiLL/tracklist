@@ -18,8 +18,8 @@ class index(WebSocketHandler):
             group: int,
         ):
         with Session(models.engine) as session:
-            xevents = database.dict_query("""
-            select extract(epoch from e.date)::int date, e.title eventtitle, e.presenter, e.contact, s.title songtitle, u.usage
+            events = database.dict_query("""
+            select extract(epoch from e.date)::int date, e.id, e.title eventtitle, e.presenter, e.contact, s.title songtitle, u.usage
             from event e
             left join songuse u on u.event_id = e.id
             left join song s on u.song_id = s.id
@@ -31,14 +31,14 @@ class index(WebSocketHandler):
             # TODO maybe create Pydantic/SqlAlchemy model and fetch that does this.
             #events = session.exec(select(models.Event).order_by(models.Event.date.asc()).filter(models.Event.date >= datetime.now()).limit(10)).all()
             #events = [event.json() for event in events]
-            for e in xevents:
+            for e in events:
                 eventdate = e["date"]
                 if not eventdate in eventsdict: eventsdict[eventdate] = defaultdict()
+                eventsdict[eventdate]["id"] = e["id"]
+                eventsdict[eventdate]["date"] = e["date"]
                 eventsdict[eventdate]["title"] = e["eventtitle"]
                 eventsdict[eventdate]["presenter"] = e["presenter"]
                 eventsdict[eventdate]["contact"] = e["contact"]
-                eventsdict[eventdate]["date"] = e["date"]
-
                 if not "songs" in eventsdict[eventdate]:
                     eventsdict[eventdate]["songs"] = []
                 if e.get("songtitle"):

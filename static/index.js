@@ -10,7 +10,6 @@ import ws from "./ws.js$$cachebust$$";
 
 const sock = ws({
     render: (state) => {
-        console.log(state.events);
         set_content("main", DIV({class: "flexrow split"},[
             state.songs && DIV({class:"card"}, [
                 H2("Songs"),
