@@ -95,3 +95,13 @@ class SongUseUpdate(SongUseBase):
     event_id: int | None = None
     song_id: int | None = None
     usage: str | None = None
+
+
+class EventSongsBase(SQLModel):
+    title: str = Field(default="Untitled", title="The title of the piece", index=True)
+    """credits: str | None = Field(default="Anonymous", title="Author(s), composer(s), etc...", )
+    song_number: int | None = Field(default=None, title="1, 101, 1024, etc...", )
+    notes: str | None = Field(default="", title="Arbitrary notes", ) """
+
+class EventSongsPublic(EventSongsBase):
+    pass

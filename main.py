@@ -134,6 +134,16 @@ async def read_users_me(
 ):
     return current_user
 
+@app.get("/eventsongs/", response_model=list[models.EventSongsPublic])
+def read_event_songs(
+        current_user: Annotated[utils.User, Depends(utils.get_current_user)],
+        session: SessionDep,
+        offset: int = 0,
+        limit: Annotated[int, Query(le=100)] = 100,
+    ):
+    events = session.exec(select(models.Event).offset(offset).limit(limit).order_by(models.Event.title.asc())).all()
+    return events
+
 @app.post("/songs/", response_model=models.SongPublic)
 def create_song(
         song: models.SongCreate,
