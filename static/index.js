@@ -10,6 +10,7 @@ import ws from "./ws.js$$cachebust$$";
 
 const sock = ws({
     render: (state) => {
+        console.log(state.events);
         set_content("main", DIV({class: "flexrow split"},[
             state.songs && DIV({class:"card"}, [
                 H2("Songs"),
@@ -19,14 +20,15 @@ const sock = ws({
             state.events && DIV({class:"card"}, [
                 H2("Upcoming Events"),
                 A({href: "/event", title:"see all events"}, "See all ->"),
-                UL({id: "events"}, state.events.map(s => LI(A({
-                    href: `/event/${s.id}`,
+                UL({id: "events"}, Object.values(state.events).map(e => LI(A({
+                    href: `/event/${e.id}`,
                     title: "View or edit event."
                 },
                 DIV({}, [
-                    H3([utils.formatdate(s.date), " ", s.title]),
-                    P(s.presenter),
-                    P(s.description),
+                    H3([utils.formatdate(e.date), " ", e.title]),
+                    P(e.presenter),
+                    P(e.description),
+                    UL(e.songs.map(s => LI(s.title)))
                     ])
                 )))), // end UL
                 BUTTON({id: "newevent", type: "button"}, "Create Event"),

@@ -1,5 +1,6 @@
 from typing import Annotated
 import json
+from collections import defaultdict
 
 from fastapi import Depends, Query
 from pydantic import BaseModel
@@ -8,6 +9,7 @@ from datetime import datetime
 
 from . import models
 from .utils import WebSocketHandler
+from . import database
 
 class index(WebSocketHandler):
 
@@ -16,9 +18,31 @@ class index(WebSocketHandler):
             group: int,
         ):
         with Session(models.engine) as session:
+            xevents = database.dict_query("""
+            select extract(epoch from e.date)::int date, e.title eventtitle, e.presenter, e.contact, s.title songtitle, u.usage
+            from event e
+            left join songuse u on u.event_id = e.id
+            left join song s on u.song_id = s.id
+            where e.date >= CURRENT_DATE order by date, songtitle;
+            """)
+            eventsdict = defaultdict()
             songs = session.exec(select(models.Song).order_by(models.Song.id.desc()).limit(10)).all()
             songs = [song.model_dump() for song in songs]
-            # select e.date, u.song_id, s.title from event e join songuse u on u.event_id = e.id join song s on s.id = u.song_id;
-            events = session.exec(select(models.Event).order_by(models.Event.date.asc()).filter(models.Event.date >= datetime.now()).limit(10)).all()
-            events = [event.json() for event in events]
-        return {"songs":songs, "events": events}
+            # TODO maybe create Pydantic/SqlAlchemy model and fetch that does this.
+            #events = session.exec(select(models.Event).order_by(models.Event.date.asc()).filter(models.Event.date >= datetime.now()).limit(10)).all()
+            #events = [event.json() for event in events]
+            for e in xevents:
+                eventdate = e["date"]
+                if not eventdate in eventsdict: eventsdict[eventdate] = defaultdict()
+                eventsdict[eventdate]["title"] = e["eventtitle"]
+                eventsdict[eventdate]["presenter"] = e["presenter"]
+                eventsdict[eventdate]["contact"] = e["contact"]
+                eventsdict[eventdate]["date"] = e["date"]
+
+                if not "songs" in eventsdict[eventdate]:
+                    eventsdict[eventdate]["songs"] = []
+                if e.get("songtitle"):
+                    eventsdict[eventdate]["songs"].append({
+                        "title": e.get("songtitle", ""),
+                    })
+        return {"songs":songs, "events": eventsdict}
