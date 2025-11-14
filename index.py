@@ -25,7 +25,7 @@ class index(WebSocketHandler):
             left join song s on u.song_id = s.id
             where e.date >= CURRENT_DATE order by date, songtitle;
             """)
-            eventsdict = defaultdict()
+            eventsdict = defaultdict(dict)
             songs = session.exec(select(models.Song).order_by(models.Song.id.desc()).limit(10)).all()
             songs = [song.model_dump() for song in songs]
             # TODO maybe create Pydantic/SqlAlchemy model and fetch that does this.
@@ -33,7 +33,6 @@ class index(WebSocketHandler):
             #events = [event.json() for event in events]
             for e in events:
                 eventdate = e["date"]
-                if not eventdate in eventsdict: eventsdict[eventdate] = defaultdict()
                 eventsdict[eventdate]["id"] = e["id"]
                 eventsdict[eventdate]["date"] = e["date"]
                 eventsdict[eventdate]["title"] = e["eventtitle"]
