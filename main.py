@@ -347,6 +347,20 @@ async def read_item(request: Request):
     )
     return response
 
+@app.get("/styleguide", response_class=HTMLResponse)
+async def read_item(request: Request):
+    user = {} #utils.get_current_user() | {}
+    response = templates.TemplateResponse(
+        request=request, name="styleguide.html",
+        context={
+            "user": request.state.user,
+            "module": "index",
+            "ws_type": "index",
+            "ws_group": 0,
+        },
+    )
+    return response
+
 @app.get("/song", response_class=HTMLResponse)
 @app.get("/song/{id}", response_class=HTMLResponse)
 async def song_get(request: Request, id: int = 0):
