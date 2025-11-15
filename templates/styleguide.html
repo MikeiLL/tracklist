@@ -1,3 +1,49 @@
 {% extends "main.html" %}
 {% block main %}
+
+<ul>{% for e in events %}
+    <li>
+        <div class="card">
+            <h3>{{e.date}}</h3>
+            <h4>{{e.title}}</h4>
+            <h4>{{e.presenter}}</h4>
+            <h4>{{e.contact}}</h4>
+            <ul> {% for s in e.songs %}
+                <li>{{ s }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </li>
+</ul>
+{% endfor %}
+
+<button type="button">click button</button>
+<a href="#" class="button">button link</a>
+<table>
+    <caption>Sample Table</caption>
+    <thead>
+        <tr>
+            <th scope="row">header one</th>
+            <th scope="row">header two</th>
+            <th scope="row">header three</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>attr one</td>
+            <td>attr two</td>
+            <td>attr three</td>
+        </tr>
+        <tr>
+            <td>attr one</td>
+            <td>attr two</td>
+            <td>attr three</td>
+        </tr>
+        <tr>
+            <td>attr one</td>
+            <td>attr two</td>
+            <td>attr three</td>
+        </tr>
+    </tbody>
+</table>
 {% endblock %}

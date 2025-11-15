@@ -350,13 +350,38 @@ async def read_item(request: Request):
 @app.get("/styleguide", response_class=HTMLResponse)
 async def read_item(request: Request):
     user = {} #utils.get_current_user() | {}
+    events = [
+        {
+            "date": "Dec 12 2027",
+            "title": "The Future of Wow",
+            "presenter": "Basil Thai",
+            "contact": "Maggie Elder",
+            "songs": [
+                "Amazing Grace",
+                "Amen",
+                "Oh Happy Day",
+            ],
+        },
+        {
+            "date": "Dec 19 2027",
+            "title": "The History of Wow",
+            "presenter": "Joe Smith",
+            "contact": "Mary Johnson",
+            "songs": [
+                "Amazing Grace",
+                "Amen",
+                "Oh Happy Day",
+            ],
+        },
+    ]
     response = templates.TemplateResponse(
         request=request, name="styleguide.html",
         context={
             "user": request.state.user,
-            "module": "index",
+            "module": "styleguide",
             "ws_type": "index",
             "ws_group": 0,
+            "events": events,
         },
     )
     return response
