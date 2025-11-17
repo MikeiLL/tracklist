@@ -6,11 +6,14 @@ from pydantic.json import pydantic_encoder
 from datetime import datetime
 from sqlalchemy import Column
 import json
+import os
+from dotenv import load_dotenv
 
-from .config import settings
+load_dotenv()
+
 
 connect_args = {"options": "-c search_path=tracklist,public", }
-engine = create_engine(settings.db_connection_string, connect_args=connect_args, echo=True)
+engine = create_engine(os.environ["DB_CONNECTION_STRING"], connect_args=connect_args, echo=True)
 
 def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
