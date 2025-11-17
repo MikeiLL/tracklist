@@ -76,12 +76,13 @@ const sock = ws({
                 FORM({id: "songs"}, [
                     TABLE([
                         THEAD([
-                            TR(TH({colSpan: 5}, "Songs")),
-                            TR([TH("Title"), TH("Credits"), TH("Usage"), TH("Notes"), TH()])
+                            TR(TH({colSpan: 6}, "Songs")),
+                            TR([TH("Title"), TH("Credits"), TH("Song Number"), , TH("Usage"), TH("Notes"), TH()])
                         ]),
                         TBODY([state.songs.map(s => TR({'data-id': s.id},[
                                 TD(SPAN(s.title)),
                                 TD(SPAN(s.credits)),
+                                TD(SPAN(s.song_number)),
                                 TD(INPUT({type: "text", name: "usage", value: s.usage})),
                                 TD(INPUT({type: "text", name: "notes", value: s.notes})),
                                 TD(BUTTON({class: "removesong", type: "button"}, "X")),

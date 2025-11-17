@@ -16,7 +16,7 @@ class events(WebSocketHandler):
                 return {"error": "Event not found"}
             event = events[0]
             songs = database.dict_query("""
-                    SELECT title, credits, usage, song_id, songuse.id, songuse.notes FROM songuse
+                    SELECT title, credits, usage, song_number, song_id, songuse.id, songuse.notes FROM songuse
                         JOIN song on songuse.song_id = song.id
                         WHERE songuse.event_id = %s
             """, (group,))
