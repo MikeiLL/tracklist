@@ -108,6 +108,21 @@ body>header nav li {
     border: 1px solid grey;
 }
 
+.eventsongs {
+    list-style: circle;
+    padding-left: 5em;
+}
+
+.eventsongs li::before {
+    content: " ";
+}
+
+.eventsongs li::marker {
+    content: "#" attr(data-number) " ";
+    color: var(--grey);
+    font-size: smaller;
+}
+
 /*
 Index
 */

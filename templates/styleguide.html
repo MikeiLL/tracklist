@@ -5,11 +5,13 @@
     <li>
         <div class="card">
             <h3>{{e.date}}</h3>
-            <h4>{{e.title}}</h4>
-            <h4>{{e.presenter}}</h4>
-            <h4>{{e.contact}}</h4>
-            <ul> {% for s in e.songs %}
-                <li>{{ s }}</li>
+            <p class="title">{{e.title}}</p>
+            <p class="personelle">
+                Presenter <span class="personelle">{{e.presenter}}</span>
+                Service Leader <span class="personelle">{{e.contact}}</span>
+            </p>
+            <ul class="eventsongs"> {% for s in e.songs %}
+                <li data-number="{{ s.song_number }}">{{ s.title }}</li>
                 {% endfor %}
             </ul>
         </div>
@@ -18,7 +20,9 @@
 {% endfor %}
 
 <button type="button">click button</button>
+
 <a href="#" class="button">button link</a>
+
 <table>
     <caption>Sample Table</caption>
     <thead>
@@ -44,6 +48,38 @@
             <td>attr two</td>
             <td>attr three</td>
         </tr>
+    </tbody>
+</table>
+
+{% set colorVars = [
+("--brandprimary", "rgb(187, 82, 239)"),
+("--brandprimarylight", "rgb(214, 160, 240)"),
+("--brandprimarydark", "rgb(83, 38, 106)"),
+("--brandsecondary", "rgb(234, 92, 147)"),
+("--notification", "green"),
+("--warning", "yellow"),
+("--alert", "red"),
+("--black", "rgb(61, 61, 59)"),
+("--white", "rgb(246, 245, 207)"),
+("--lightgrey", "lightgrey"),
+("--grey", "grey"),
+("--transparentgrey", "#99999933"),
+] %}
+<table>
+    <caption>Colors</caption>
+    <thead>
+        <tr>
+            <th scope="row">Name</th>
+            <th scope="row">Color Swatch</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for col in colorVars %}
+        <tr>
+            <td>{{col[0]}}</td>
+            <td style="background-color: var({{col[0]}})"></td>
+        </tr>
+        {% endfor %}
     </tbody>
 </table>
 {% endblock %}

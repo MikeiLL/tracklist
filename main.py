@@ -357,9 +357,9 @@ async def read_item(request: Request):
             "presenter": "Basil Thai",
             "contact": "Maggie Elder",
             "songs": [
-                "Amazing Grace",
-                "Amen",
-                "Oh Happy Day",
+                {"song_number": 1234, "title": "Amazing Grace"},
+                {"song_number": 4321, "title": "Amen"},
+                {"song_number": 1010, "title": "Oh Happy Day"},
             ],
         },
         {
@@ -368,9 +368,10 @@ async def read_item(request: Request):
             "presenter": "Joe Smith",
             "contact": "Mary Johnson",
             "songs": [
-                "Amazing Grace",
-                "Amen",
-                "Oh Happy Day",
+                {"song_number": 1234, "title": "Amazing Grace"},
+                {"song_number": 4321, "title": "Amen"},
+                {"song_number": 1010, "title": "Oh Happy Day"},
+                {"song_number": 1, "title": "Amazing Something Else That is Long"},
             ],
         },
         {
