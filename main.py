@@ -373,6 +373,13 @@ async def read_item(request: Request):
                 "Oh Happy Day",
             ],
         },
+        {
+            "date": "Dec 19 2027",
+            "title": "The History of Wow",
+            "presenter": "Joe Smith",
+            "contact": "Mary Johnson",
+            "songs": [],
+        },
     ]
     response = templates.TemplateResponse(
         request=request, name="styleguide.html",
