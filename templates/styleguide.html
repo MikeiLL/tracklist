@@ -1,14 +1,14 @@
 {% extends "main.html" %}
 {% block main %}
 
-<ul>{% for e in events %}
-    <li>
+<ul class="eventlist">
+    {% for e in events %}
+    <li data-date="{{e.date}}">
         <div class="card">
-            <h3>{{e.date}}</h3>
             <p class="title">{{e.title}}</p>
             <p class="personelle">
-                Presenter <span class="personelle">{{e.presenter}}</span>
-                Service Leader <span class="personelle">{{e.contact}}</span>
+                <span class="label">Presenter</span> {{e.presenter}} &nbsp; &mdash; &nbsp;
+                <span class="label">Service Leader</span> {{e.contact}}
             </p>
             <ul class="eventsongs"> {% for s in e.songs %}
                 <li data-number="{{ s.song_number }}">{{ s.title }}</li>
@@ -16,8 +16,8 @@
             </ul>
         </div>
     </li>
+    {% endfor %}
 </ul>
-{% endfor %}
 
 <button type="button">click button</button>
 

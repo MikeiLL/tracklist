@@ -375,8 +375,8 @@ async def read_item(request: Request):
             ],
         },
         {
-            "date": "Dec 19 2027",
-            "title": "The History of Wow",
+            "date": "Dec 26 2027",
+            "title": "The Now of Wow",
             "presenter": "Joe Smith",
             "contact": "Mary Johnson",
             "songs": [],

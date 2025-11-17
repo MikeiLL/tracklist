@@ -108,6 +108,20 @@ body>header nav li {
     border: 1px solid grey;
 }
 
+ul.eventlist {
+    padding-left: 8em;
+}
+
+ul.eventlist .personelle .label {
+    font-variant: small-caps;
+    color: var(--grey);
+}
+
+.eventlist li::marker {
+    content: attr(data-date) " ";
+    font-size: larger;
+}
+
 .eventsongs {
     list-style: circle;
     padding-left: 5em;
