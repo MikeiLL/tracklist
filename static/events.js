@@ -77,7 +77,7 @@ const sock = ws({
                     TABLE([
                         THEAD([
                             TR(TH({colSpan: 6}, "Songs")),
-                            TR([TH("Title"), TH("Credits"), TH("Song Number"), , TH("Usage"), TH("Notes"), TH()])
+                            TR([TH("Title"), TH("Credits"), TH("Song Number"), TH("Usage"), TH("Notes"), TH()])
                         ]),
                         TBODY([state.songs.map(s => TR({'data-id': s.id},[
                                 TD(SPAN(s.title)),
