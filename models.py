@@ -4,7 +4,8 @@ from fastapi import Depends, FastAPI, HTTPException, Query
 from sqlmodel import Field, Session, Relationship, SQLModel, create_engine, select, ForeignKey
 from pydantic.json import pydantic_encoder
 from datetime import datetime
-from sqlalchemy import Column
+from sqlalchemy import String, Column
+from sqlalchemy.dialects.postgresql import ARRAY
 import json
 import os
 from dotenv import load_dotenv
@@ -54,6 +55,7 @@ class SongBase(SQLModel):
     credits: str | None = Field(default="Anonymous", title="Author(s), composer(s), etc...", )
     song_number: int | None = Field(default=None, title="1, 101, 1024, etc...", )
     notes: str | None = Field(default="", title="Arbitrary notes", )
+    tags: list[str] | None = Field(default=None, sa_column=Column(ARRAY(String)), )
 
 class Song(SongBase, table=True):
     id: int | None = Field(default=None, primary_key=True)
