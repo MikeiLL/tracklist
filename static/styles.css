@@ -170,6 +170,7 @@ ul.tags li .delete {
     right: 0;
     font-size: small;
     line-height: 0.5;
+    cursor: pointer;
 }
 
 .delete {
