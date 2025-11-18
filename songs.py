@@ -27,6 +27,7 @@ class songs(WebSocketHandler):
         changes = {k:v for k,v in msg.items() if k in whitelist}
         if changes: database.query("UPDATE song SET " + ",".join(k + "=%s" for k in changes) + " WHERE id = %s", (*changes.values(), int(usage)))
         if tag:=msg.get("new_tag"):
+            tag = tag.casefold()
             database.query("UPDATE song SET tags = tags || %s::text where id = %s and not (%s = any(tags))", (tag, int(usage), tag,))
         await self.send_updates_all(sock["ws_group"])
 
