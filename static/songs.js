@@ -4,7 +4,7 @@ import {
     on,
     DOM,
 } from "https://rosuav.github.io/choc/factory.js";
-const {A, BUTTON, DIV, FIELDSET, FORM, INPUT, LABEL, STYLE, TABLE, TBODY, TD, TEXTAREA, TH, THEAD, TR} = lindt; //autoimport
+const {A, BUTTON, DIV, FIELDSET, FORM, INPUT, LABEL, LI, SPAN, STYLE, TABLE, TBODY, TD, TEXTAREA, TH, THEAD, TR, UL} = lindt; //autoimport
 import * as utils from "./utils.js$$cachebust$$";
 import ws from "./ws.js$$cachebust$$";
 
@@ -22,6 +22,7 @@ const sock = ws({
         ]);
         replace_content("main", [,
             state.song && [
+                console.log(state.song.tags),
                 DIV({class: "notifications hidden"}),
                 FORM({id: "editsongform", "data-id": state.song.id},[
                     FIELDSET([
@@ -29,6 +30,7 @@ const sock = ws({
                         LABEL(["Credits", INPUT({type: "text", name: "credits", value: state.song.credits})]),
                         LABEL(["Number", INPUT({type: "number", name: "song_number", value: state.song.song_number})]),
                         LABEL(["Notes", TEXTAREA({type: "text", name: "notes", value: state.song.notes})]),
+                        UL({class: "tags"}, state.song.tags.map(t => LI([t, SPAN({class: "delete"}, "x")]))),
                     ]),
                 ]),
             ],

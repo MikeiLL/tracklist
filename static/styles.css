@@ -152,6 +152,30 @@ ul.eventlist .card p.personelle {
     font-size: smaller;
 }
 
+ul.tags {
+    display: flex;
+    gap: 0.5em;
+}
+
+ul.tags li {
+    border: 1px dotted var(--brandprimarylight);
+    background-color: var(--transparentgrey);
+    padding: 0.2em;
+    position: relative;
+}
+
+ul.tags li .delete {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-size: small;
+    line-height: 0.5;
+}
+
+.delete {
+    color: var(--grey);
+}
+
 /*
 Index
 */
