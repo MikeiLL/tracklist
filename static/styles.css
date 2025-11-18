@@ -155,6 +155,8 @@ ul.eventlist .card p.personelle {
 ul.tags {
     display: flex;
     gap: 0.5em;
+    flex-wrap: wrap;
+    min-width: 120px;
 }
 
 ul.tags li {

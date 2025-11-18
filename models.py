@@ -56,6 +56,8 @@ class SongBase(SQLModel):
     song_number: int | None = Field(default=None, title="1, 101, 1024, etc...", )
     notes: str | None = Field(default="", title="Arbitrary notes", )
     # TODO alter table song alter column tags set default array[]::text[];
+    # then update song set tags = array[]::text[] where tags is null;
+    # then alter table song alter column tags set not null;
     tags: list[str] | None = Field(default=None, sa_column=Column(ARRAY(String)), )
 
 class Song(SongBase, table=True):
