@@ -30,7 +30,10 @@ const sock = ws({
                         LABEL(["Credits", INPUT({type: "text", name: "credits", value: state.song.credits})]),
                         LABEL(["Number", INPUT({type: "number", name: "song_number", value: state.song.song_number})]),
                         LABEL(["Notes", TEXTAREA({type: "text", name: "notes", value: state.song.notes})]),
-                        UL({class: "tags"}, state.song.tags.map(t => LI([t, SPAN({class: "delete"}, "x")]))),
+                        UL({class: "tags"}, [
+                            state.song.tags.map(t => LI([t, SPAN({class: "delete"}, "x")])),
+                            INPUT({type: "text", name: "new_tag", })
+                        ]),
                     ]),
                 ]),
             ],
@@ -87,8 +90,7 @@ on("click", "#newsong", async () => {
     sock.send({cmd: "create_song"});
 });
 
-
-
 on("change", "#editsongform input, #editsongform textarea", e => {
     sock.send({cmd: "edit_song", id: e.match.closest_data("id"), [e.match.name]: e.match.value});
+    if (e.match.name === "new_tag") e.match.value = "";
 })

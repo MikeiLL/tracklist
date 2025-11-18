@@ -21,11 +21,14 @@ class songs(WebSocketHandler):
         return {"songs":songs}
 
     async def sockmsg_edit_song(self, sock: dict, msg: dict):
-        whitelist = ["title", "credits", "song_number", "notes"]
+        whitelist = ["title", "credits", "song_number", "notes", ]
         usage = msg.get("id")
         if not usage: return
         changes = {k:v for k,v in msg.items() if k in whitelist}
         if changes: database.query("UPDATE song SET " + ",".join(k + "=%s" for k in changes) + " WHERE id = %s", (*changes.values(), int(usage)))
+        if tag:=msg.get("new_tag"):
+            print("got a tag", tag)
+            database.query("UPDATE song SET tags = tags || %s::text where id = %s and not (%s = any(tags))", (tag, int(usage), tag,))
         await self.send_updates_all(sock["ws_group"])
         return {"cmd": "song_updated", "changes": changes}
 
