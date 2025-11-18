@@ -1,6 +1,7 @@
 import psycopg2
 import psycopg2.extras
 import os
+from . import utils
 
 
 
@@ -18,3 +19,9 @@ def query(query, params=()):
     cur.execute(query, params, )
     if not cur.description is None:
         return cur.fetchall()
+
+
+async def authenticate_user(username: str, password: str):
+    users = query("SELECT password FROM userlogin WHERE login = %s", (username,))
+    if not users: return False
+    return utils.check_password(password, users[0][0])

@@ -19,6 +19,11 @@ engine = create_engine(os.environ["DB_CONNECTION_STRING"], connect_args=connect_
 def create_db_and_tables():
     SQLModel.metadata.create_all(engine)
 
+class UserLogin(SQLModel, table=True):
+    login: str | None = Field(default=None, primary_key=True)
+    password: str | None = Field()
+
+
 class EventBase(SQLModel):
     date: datetime = Field()
     title: str | None = Field(default="To be determined", title="The name or title of the event", )

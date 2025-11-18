@@ -16,6 +16,7 @@ import stat
 import random
 
 
+
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -23,6 +24,7 @@ from . import utils
 
 from . import models
 from . import sockets
+from . import database
 
 SECRET_KEY = os.environ["SECRET_KEY"]
 ALGORITHM = os.environ["ALGORITHM"]
@@ -113,7 +115,7 @@ async def login_for_access_token(
     request: Request,
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ) -> Response:
-    user = utils.authenticate_user(utils.fake_users_db, form_data.username, form_data.password)
+    user = await database.authenticate_user(form_data.username, form_data.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -122,7 +124,7 @@ async def login_for_access_token(
         )
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = utils.create_access_token(
-        data={"sub": user.username}, expires_delta=access_token_expires
+        data={"sub": form_data.username}, expires_delta=access_token_expires
     )
 
     response.set_cookie(key="tracklist_access_token",value=f"Bearer {access_token}", httponly=True)

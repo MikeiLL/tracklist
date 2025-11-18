@@ -22,17 +22,6 @@ def hash_password(password):
 def check_password(password, hashed):
 	return bcrypt.checkpw(password.encode('utf-8'), hashed.encode('utf-8'))
 
-def random_hex():
-	return binascii.b2a_hex(os.urandom(8)).decode("ascii")
-
-fake_users_db = {
-    os.environ["SINGLE_USER"]: {
-        "hashed_password": os.environ["HASHED_PASSWORD"],
-        "username": os.environ["SINGLE_USER"],
-    },
-}
-
-
 class InvalidCredentialsError(HTTPException):
     def __init__(self):
         super().__init__(
@@ -64,23 +53,6 @@ class TokenData(BaseModel):
 class User(BaseModel):
     username: str
 
-
-class UserInDB(User):
-    hashed_password: str
-
-def get_user(db, username: str):
-    if username in db:
-        user_dict = db[username]
-        return UserInDB(**user_dict)
-
-def authenticate_user(fake_db, username: str, password: str):
-    user = get_user(fake_db, username)
-    if not user:
-        return False
-    if not check_password(password, user.hashed_password):
-        return False
-    return user
-
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
@@ -90,11 +62,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
         token_data = TokenData(username=username)
     except InvalidTokenError:
         raise InvalidCredentialsError
-    user = get_user(fake_users_db, username=token_data.username)
-    if user is None:
-        raise InvalidCredentialsError
-    return user
-
+    return username
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode = data.copy()
