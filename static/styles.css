@@ -131,6 +131,12 @@ ul.eventlist .card h2 {
     margin: 0;
     padding: 0;
     color: var(--brandprimarydark);
+    display: flex;
+    justify-content: space-between;
+}
+
+ul.eventlist .card h2 a {
+    text-decoration: none;
 }
 
 ul.eventlist .card p.personelle {

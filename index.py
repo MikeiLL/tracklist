@@ -19,15 +19,14 @@ class index(WebSocketHandler):
         ):
         with Session(models.engine) as session:
             events = database.dict_query("""
-            select extract(epoch from e.date)::int date, e.id, e.title eventtitle, e.presenter, e.contact, s.title songtitle, u.usage
+            select extract(epoch from e.date)::int date, e.id, e.title eventtitle,
+                    e.presenter, e.contact, s.title songtitle, s.song_number, u.usage
             from event e
             left join songuse u on u.event_id = e.id
             left join song s on u.song_id = s.id
             where e.date >= CURRENT_DATE order by date, songtitle;
             """)
             eventsdict = defaultdict(dict)
-            songs = session.exec(select(models.Song).order_by(models.Song.id.desc()).limit(10)).all()
-            songs = [song.model_dump() for song in songs]
             # TODO maybe create Pydantic/SqlAlchemy model and fetch that does this.
             #events = session.exec(select(models.Event).order_by(models.Event.date.asc()).filter(models.Event.date >= datetime.now()).limit(10)).all()
             #events = [event.json() for event in events]
@@ -43,5 +42,7 @@ class index(WebSocketHandler):
                 if e.get("songtitle"):
                     eventsdict[eventdate]["songs"].append({
                         "title": e.get("songtitle", ""),
+                        "song_number": e.get("song_number", ""),
+                        "usage": e.get("usage", ""),
                     })
-        return {"songs":songs, "events": eventsdict}
+        return {"events": eventsdict}

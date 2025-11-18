@@ -4,32 +4,28 @@ import {
     on,
     DOM,
 } from "https://rosuav.github.io/choc/factory.js";
-const {A, BUTTON, DIV, H2, H3, LI, P, UL} = choc; //autoimport
+const {A, BUTTON, DIV, H2, LI, P, SPAN, UL} = choc; //autoimport
 import * as utils from "./utils.js$$cachebust$$";
 import ws from "./ws.js$$cachebust$$";
 
 const sock = ws({
     render: (state) => {
-        set_content("main", DIV({class: "flexrow split"},[
-            state.songs && DIV({class:"card"}, [
-                H2("Songs"),
-                A({href: "/song", title:"see all songs"}, "See all ->"),
-                UL({id: "songs"}, state.songs.map(s => LI(A({href:`/song/${s.id}`, title:"view/edit song"},[s.title, ' (', s.credits, ')'])))),
-            ]),
-            state.events && DIV({class:"card"}, [
+        set_content("main", DIV({class: "flexrow"},[
+            state.events && DIV([
                 H2("Upcoming Events"),
                 A({href: "/event", title:"see all events"}, "See all ->"),
-                UL({id: "events"}, Object.values(state.events).map(e => LI(A({
-                    href: `/event/${e.id}`,
-                    title: "View or edit event."
-                },
-                DIV({}, [
-                    H3([utils.formatdate(e.date), " ", e.title]),
-                    P(e.presenter),
-                    P(e.description),
-                    UL(e.songs.map(s => LI(s.title)))
+                UL({id: "events", class: "eventlist"}, Object.values(state.events).map(e => LI({"data-date": utils.formatdate(e.date)}, DIV({class:"card"},[
+                    H2([e.title, A({
+                        href: `/event/${e.id}`,
+                        title: "View or edit event."
+                    }, "✎")]),
+                    P({class: "personelle", }, [
+                        SPAN({class:"label"}, "Presenter "), e.presenter || "not set", " – ",
+                        SPAN({class:"label"}, "Service Leader "), e.contact || "not set",
+                    ]),
+                    UL({class: "eventsongs"}, e.songs.map(s => LI({"data-number": s.song_number || ""},s.title)))
                     ])
-                )))), // end UL
+                ))), // end UL
                 BUTTON({id: "newevent", type: "button"}, "Create Event"),
             ]),
         ]));
