@@ -65,3 +65,7 @@ sudo systemctl daemon-reload
 sudo systemctl enable tracklist
 sudo systemctl start tracklist
 ```
+
+## AWSCLI
+
+Their docs don't work on Debian see [these](https://wiki.debian.org/Amazon/EC2/HowTo/awscli)
