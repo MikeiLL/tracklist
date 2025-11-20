@@ -22,6 +22,6 @@ def query(query, params=()):
 
 
 async def authenticate_user(username: str, password: str):
-    users = query("SELECT password FROM userlogin WHERE login = %s", (username,))
+    users = query("SELECT password FROM userlogin WHERE login ilike %s", (username,))
     if not users: return False
     return utils.check_password(password, users[0][0])
