@@ -349,6 +349,16 @@ async def read_item(request: Request):
     )
     return response
 
+
+@app.get("/login", response_class=HTMLResponse)
+async def login(request: Request):
+    return templates.TemplateResponse(
+        request=request, name="login.html",
+        context={
+            "user": request.state.user,
+        },
+    )
+
 @app.get("/styleguide", response_class=HTMLResponse)
 async def read_item(request: Request):
     user = {} #utils.get_current_user() | {}

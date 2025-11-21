@@ -68,4 +68,5 @@ sudo systemctl start tracklist
 
 ## AWSCLI
 
-Their docs don't work on Debian see [these](https://wiki.debian.org/Amazon/EC2/HowTo/awscli)
+Their docs don't work on Debian see [these](https://wiki.debian.org/Amazon/EC2/HowTo/awscli),
+also not the aws cli seems to be installed by default.
