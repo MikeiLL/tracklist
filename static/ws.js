@@ -20,10 +20,10 @@ export default (methods) => {
         const url = new URL("/ws", location);
         url.protocol = url.protocol === "https:" ? "wss:" : "ws:"
         ws = new WebSocket(url)
-        ws.onopen = async () => {
+        ws.onopen = async () => {/*
             if (reconnect_delay > max_reconnect_time) {
                 return console.log("stop trying")
-            }
+            } */
             console.log("websocket connected");
             connected = true;
             let access_token = getCookie("tracklist_access_token");
@@ -47,11 +47,12 @@ export default (methods) => {
             console.log("websocket disconnected", reconnect_delay);
             connected = false;
             ws = null;
-            if (reconnect_delay > max_reconnect_time) {
+            if (reconnect_delay == 250 || reconnect_delay > max_reconnect_time) {
                 setTimeout(reconnect, reconnect_delay);
                 if (reconnect_delay < max_reconnect_time) reconnect_delay *= 1.5 + 0.5 * Math.random(); //Exponential back-off with a (small) random base
             } else {
-                window.location = "/login"; // take 'em back to index which will return login if no cookie.
+                console.log("reconnect?",reconnect_delay);
+                //window.location = "/login"; // take 'em back to index which will return login if no cookie.
             }
 
             // TODO put something in the DOM
