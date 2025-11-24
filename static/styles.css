@@ -108,6 +108,14 @@ body>header nav li {
     border: 1px solid grey;
 }
 
+/*
+ * EVENTS
+*/
+
+form#songs tr:has(input:checked) {
+    background: var(--grey);
+}
+
 ul.eventlist {
     padding-left: 8em;
 }

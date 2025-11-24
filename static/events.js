@@ -76,10 +76,11 @@ const sock = ws({
                 FORM({id: "songs"}, [
                     TABLE([
                         THEAD([
-                            TR(TH({colSpan: 7}, "Songs")),
-                            TR([TH("Title"), TH("Credits"), TH("Song Number"), TH("Usage"), TH("Usage Notes"), TH("Song Notes"), TH()])
+                            TR(TH({colSpan: 8}, "Songs")),
+                            TR([TH(),TH("Title"), TH("Credits"), TH("Song Number"), TH("Usage"), TH("Usage Notes"), TH("Song Notes"), TH()])
                         ]),
                         TBODY([state.songs.map(s => TR({'data-id': s.id},[
+                            TD(INPUT({type: "checkbox", name: "show"})),
                             TD(A({href: `/song/${s.song_id}`, title: "view/edit song"},s.title)),
                                 TD(SPAN(s.credits)),
                                 TD(SPAN(s.song_number)),
