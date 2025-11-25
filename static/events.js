@@ -26,7 +26,7 @@ const sock = ws({
                     ]),
                     LABEL([
                         "Song no.",
-                        INPUT({type: "number",name: "song_number"})
+                        INPUT({type: "number", name: "song_number", value: 0})
                     ]),
                     LABEL([
                         "Usage (offertory, etc)",
@@ -165,7 +165,6 @@ on("submit", "#newsong", async (e) => {
     })
     const song = await result.json();
     sock.send({cmd: "add_song_use", songid: song.id, usage: formEntries.usage});
-    DOM("dialog#main").close();
 });
 
 on("click", ".addsong", async (e) => {
