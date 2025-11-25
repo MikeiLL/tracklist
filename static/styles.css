@@ -167,6 +167,12 @@ ul.eventlist .card p.personelle {
     width: 3em;
 }
 
+form#newsong {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+}
+
 ul.tags {
     display: flex;
     gap: 0.5em;

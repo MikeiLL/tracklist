@@ -31,6 +31,10 @@ const sock = ws({
                     LABEL([
                         "Usage (offertory, etc)",
                         INPUT({name: "usage"})
+                    ]),,
+                    LABEL([
+                        "Song Notes",
+                        INPUT({name: "notes"})
                     ]),
                     INPUT({type: "submit"}, "Create/Add"),
                 ])]
