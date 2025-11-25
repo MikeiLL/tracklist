@@ -277,7 +277,7 @@ def update_event(
 
 
 @app.post("/songuses/", response_model=models.SongUsePublic)
-def create_song(
+def create_song_use(
         songuse: models.SongUseCreate,
         session: SessionDep,
         current_user: Annotated[utils.User, Depends(utils.get_current_user)],
