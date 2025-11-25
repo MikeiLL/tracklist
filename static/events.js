@@ -25,6 +25,10 @@ const sock = ws({
                         INPUT({name: "credits"})
                     ]),
                     LABEL([
+                        "Song no.",
+                        INPUT({type: "number",name: "song_number"})
+                    ]),
+                    LABEL([
                         "Usage (offertory, etc)",
                         INPUT({name: "usage"})
                     ]),
@@ -146,7 +150,8 @@ on("click", "button#addsong", async (e) => {
 on("submit", "#newsong", async (e) => {
     e.preventDefault();
     const formEntries = Object.fromEntries(new FormData(e.match));
-    const result = await fetch("/songs", {
+    formEntries.tags = []; // hack around not null requirement
+    const result = await fetch("/songs/", {
         method: "POST",
         headers: {
             "content-type": "application/json",
