@@ -116,8 +116,9 @@ form#songs tr:has(input:checked) {
     background: var(--grey);
 }
 
-ul.eventlist {
-    padding-left: 8em;
+ul.eventlist li {
+    display: flex;
+    justify-content: flex-start;
 }
 
 ul.eventlist .personelle .label {
@@ -130,8 +131,8 @@ ul.eventlist .card {
     margin: 0.5em;
 }
 
-.eventlist li::marker {
-    content: attr(data-date) " ";
+.eventlist li .date {
+    width: fit-content;
     font-size: larger;
 }
 
@@ -151,19 +152,19 @@ ul.eventlist .card p.personelle {
     margin: 0;
 }
 
-.eventsongs {
-    list-style: circle;
-    padding-left: 5em;
+.eventsongs li {
+    display: flex;
+    gap: 0.4em;
 }
 
-.eventsongs li::before {
-    content: " ";
-}
-
-.eventsongs li::marker {
-    content: "#" attr(data-number) " ";
+.eventsongs li span {
     color: var(--grey);
-    font-size: smaller;
+}
+
+.eventsongs li span.songnum {
+    display: inline-block;
+    text-align: right;
+    width: 3em;
 }
 
 ul.tags {
