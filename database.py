@@ -6,12 +6,10 @@ from psycopg2 import pool
 
 DB_CONNECTION_STRING = os.environ["DB_CONNECTION_STRING"]
 
-
 # Create a connection pool
-connection_pool = psycopg2.pool.SimpleConnectionPool(
+connection_pool = pool.SimpleConnectionPool(
     1, 10, DB_CONNECTION_STRING
 )
-
 
 def dict_query(query, params=()):
   _conn = connection_pool.getconn()
