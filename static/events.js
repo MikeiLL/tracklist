@@ -64,6 +64,7 @@ const sock = ws({
         if (state.event) {
             return set_content("main", [
                 DIV({class: "notifications hidden"}),
+                BUTTON({id: "newevent", type: "button"}, "Create Another Event"),
                 FORM({id: "event"}, [
                     FIELDSET([
                         LEGEND("Event Details"),
