@@ -1,6 +1,6 @@
 let ws = null;
 let reconnect_delay = 250;
-const max_reconnect_time = 1000;
+const max_reconnect_time = 60000;
 
 function getCookie(name) {
     const cookies = document.cookie.split(";");
@@ -47,15 +47,14 @@ export default (methods) => {
             console.log("websocket disconnected", reconnect_delay);
             connected = false;
             ws = null;
-            if (reconnect_delay == 250 || reconnect_delay > max_reconnect_time) {
+            if (reconnect_delay < max_reconnect_time) {
                 setTimeout(reconnect, reconnect_delay);
-                if (reconnect_delay < max_reconnect_time) reconnect_delay *= 1.5 + 0.5 * Math.random(); //Exponential back-off with a (small) random base
+                //Exponential back-off with a (small) random base
+                reconnect_delay *= 1.5 + 0.5 * Math.random();
             } else {
-                console.log("reconnect?",reconnect_delay);
-                //window.location = "/login"; // take 'em back to index which will return login if no cookie.
+                window.location = "/login"; // take 'em back to index which will return login if no cookie.
             }
-
-            // TODO put something in the DOM
+            // TODO maybe put something in the DOM
         }
     }
     reconnect();
