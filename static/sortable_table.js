@@ -37,7 +37,8 @@ export class sortable_table {
 	}
 
 	set_filter(filter) {
-		this.filter = filter;
+        this.filter = filter;
+        console.log({filter: filter});
 		if (this.items) this.render(this.items);
 	}
 
@@ -58,9 +59,10 @@ export class sortable_table {
 			if (!this.filter) return true;
 			let display = true;
 			Object.entries(this.filter).forEach(([key, value]) => {
-				if (key === "search") {
+                if (key === "search") {
+                    console.log("it does it does", value);
 					for (let val of value) {
-						if (!Object.values(item).some(cell_content => ("" + cell_content).toLowerCase().includes(("" + val).toLowerCase()))) display = false;
+                        if (!Object.values(item).some(cell_content => {console.log(val); return ("" + cell_content).toLowerCase().includes(("" + val).toLowerCase())})) display = false;
 					}
 				} else if (item[key] != value) display = false; // coerce as needed
 			});

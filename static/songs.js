@@ -7,6 +7,10 @@ import {
 const {A, BUTTON, DIV, FIELDSET, FORM, INPUT, LABEL, LI, SPAN, STYLE, TABLE, TBODY, TD, TEXTAREA, TH, THEAD, TR, UL} = lindt; //autoimport
 import * as utils from "./utils.js$$cachebust$$";
 import ws from "./ws.js$$cachebust$$";
+console.log("hello");
+import {sortable_table} from "./sortable_table.js";
+
+
 
 const sock = ws({
     render: (state) => {
@@ -20,7 +24,7 @@ const sock = ws({
                 INPUT({type: "submit", class: "button"}, "Submit")]),
             ]),
         ]);
-        replace_content("main", [,
+        false && replace_content("main", [,
             state.song && [
                 console.log(state.song.tags),
                 DIV({class: "notifications hidden"}),
@@ -68,6 +72,27 @@ const sock = ws({
                 ]),
             ],
         ]);
+        replace_content("main", [TABLE({"id": "some-table-in-the-dom"})]);
+
+        const someTable = new sortable_table({
+            element: DOM("#some-table-in-the-dom"),
+            cols: [
+                {label: "Title", field: "title", style: "text-align: left;"},
+                {label: "Credits", field: "credits", style: "text-align: left;"},
+                {label: "Number", field: "number", style: "text-align: left;"},
+                {label: "Tags", field: "tags", style: "text-align: left;"},
+                {label: "Notes", field: "notes", style: "text-align: left;"},
+                {label: "Edit", style: "text-align: center;", class: "button", render: () => A({class: "button", href: `/song/${"row.id"}`, title: "edit song"}, "edit")},
+            ],
+            rowAttrs: (row) => ({
+                "data-id": row.id,
+                "key": row.id,
+            }),
+        });
+        someTable.set_filter({search: ["Title"]});
+        if (state.songs) {
+            return someTable.render(state.songs);
+        }
     },
     sockmsg_song_created: (msg) => {
         window.location = `/song/${msg.id}`;
