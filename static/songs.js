@@ -72,10 +72,21 @@ const sock = ws({
                 ]),
             ],
         ]);
-        replace_content("main", [TABLE({"id": "some-table-in-the-dom"})]);
+        replace_content("main", [
+            TABLE({"id": "songlist_filter"}, [
+                TR([TH("title"), TH("Credits"), TH("Tags"),]),
+                TR([
+                    TD(INPUT({name: "title", value: ""})),
+                    TD(INPUT({name: "credits", })),
+                    TD(INPUT({name: "tags", })),
+                ])
+            ]),
+            TABLE({"id": "songlisting"})
+        ]);
 
-        const someTable = new sortable_table({
-            element: DOM("#some-table-in-the-dom"),
+
+        const songTable = new sortable_table({
+            element: DOM("#songlisting"),
             cols: [
                 {label: "Title", field: "title", style: "text-align: left;"},
                 {label: "Credits", field: "credits", style: "text-align: left;"},
@@ -89,9 +100,24 @@ const sock = ws({
                 "key": row.id,
             }),
         });
-        someTable.set_filter({search: ["Title"]});
+
+
+        function song_list_filter() {
+            //const search = DOM("#search").value.toLowerCase().split(" ");
+            const form_elems = DOM("#songlist_filter").querySelectorAll("input");
+            const song_attributes = {};
+            form_elems.forEach(elem => {
+                if (elem.value) song_attributes[elem.name] = elem.value;
+            });
+            //song_attributes.search = search;
+            songTable.set_filter(song_attributes);
+        }
+
+        on("change", "#songlist_filter input", song_list_filter);
+        on("input", "#songlist_filter input", song_list_filter);
+
         if (state.songs) {
-            return someTable.render(state.songs);
+            return songTable.render(state.songs);
         }
     },
     sockmsg_song_created: (msg) => {
