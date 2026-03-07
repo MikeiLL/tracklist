@@ -318,6 +318,12 @@ table td {
  FORMS
 */
 
+tr.reverse_labels td label {
+    display: inline-flex;
+    flex-direction: column-reverse;
+    align-items: end;
+}
+
 form#event fieldset {
     display: flex;
     flex-wrap: wrap;

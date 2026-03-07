@@ -10,7 +10,7 @@ import ws from "./ws.js$$cachebust$$";
 
 import {sortable_table} from "./sortable_table.js";
 
-
+const CHECKED_ROWS = [];
 
 const sock = ws({
     render: (state) => {
@@ -42,11 +42,11 @@ const sock = ws({
                 ]),
             ],
             state.songs && TABLE({"id": "songlist_filter"}, [
-                TR([TH("title"), TH("Credits"), TH("Tags"),]),
-                TR([
-                    TD(INPUT({name: "title", value: ""})),
-                    TD(INPUT({name: "credits", })),
-                    TD(INPUT({name: "tags", })),
+                TR({class:"reverse_labels"},[
+                    TD(LABEL(["Title",INPUT({name: "title", value: ""})])),
+                    TD(LABEL(["Credits",INPUT({name: "credits", })])),
+                    TD(LABEL(["Tags", INPUT({name: "tags", })])),
+                    TD({colspan: 3}, TABLE(TR([TD("test"),TD(123),]))),
                 ])
             ]),
             state.songs && TABLE({"id": "songlisting"})
@@ -72,7 +72,16 @@ const sock = ws({
 
         on("click", "#songlisting tr td a", (e) => e.match.href = `/song/${e.match.closest_data("id")}`);
 
-        on("click", "input[type=checkbox]", (e) => console.log(e.match.checked));
+        on("click", "input[type=checkbox]", (e) => {
+            const id = e.match.closest_data("id");
+            if (CHECKED_ROWS.includes(id)) {
+                let idx = CHECKED_ROWS.indexOf(id);
+                if (idx > -1) {
+                    CHECKED_ROWS.splice(idx, 1);
+                }
+            } else {CHECKED_ROWS.push(id);}
+                console.log(CHECKED_ROWS);
+         });
 
 
 

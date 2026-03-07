@@ -38,7 +38,6 @@ export class sortable_table {
 
     set_filter(filter) {
         this.filter = filter;
-        console.log({filter: filter});
         if (this.items) this.render(this.items);
     }
 
