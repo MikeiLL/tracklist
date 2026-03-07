@@ -7,7 +7,7 @@ import {
 const {A, BUTTON, DIV, FIELDSET, FORM, INPUT, LABEL, LI, SPAN, STYLE, TABLE, TBODY, TD, TEXTAREA, TH, THEAD, TR, UL} = lindt; //autoimport
 import * as utils from "./utils.js$$cachebust$$";
 import ws from "./ws.js$$cachebust$$";
-console.log("hello");
+
 import {sortable_table} from "./sortable_table.js";
 
 
@@ -25,7 +25,7 @@ const sock = ws({
             ]),
         ]);
         replace_content("main", [
-            state.song && state.song && [
+            state.song && [
                 console.log(state.song.tags),
                 DIV({class: "notifications hidden"}),
                 FORM({id: "editsongform", "data-id": state.song.id},[
@@ -70,7 +70,11 @@ const sock = ws({
             }),
         });
 
-        on("click", "#songlisting tr td a", (e) => e.match.href=`/song/${e.match.closest_data("id")}`);
+        on("click", "#songlisting tr td a", (e) => e.match.href = `/song/${e.match.closest_data("id")}`);
+
+        on("click", "input[type=checkbox]", (e) => console.log(e.match.checked));
+
+
 
         function song_list_filter() {
             //const search = DOM("#search").value.toLowerCase().split(" ");
@@ -82,6 +86,7 @@ const sock = ws({
             //song_attributes.search = search;
             songTable.set_filter(song_attributes);
         }
+
 
         on("change", "#songlist_filter input", song_list_filter);
         on("input", "#songlist_filter input", song_list_filter);
