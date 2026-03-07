@@ -24,8 +24,8 @@ const sock = ws({
                 INPUT({type: "submit", class: "button"}, "Submit")]),
             ]),
         ]);
-        false && replace_content("main", [,
-            state.song && [
+        replace_content("main", [
+            state.song && state.song && [
                 console.log(state.song.tags),
                 DIV({class: "notifications hidden"}),
                 FORM({id: "editsongform", "data-id": state.song.id},[
@@ -41,39 +41,7 @@ const sock = ws({
                     ]),
                 ]),
             ],
-            BUTTON({id: "newsong", type: "button"}, `${state.song ? "Add another" : "New"} song`),
-            state.songs && [
-                TABLE({id: "songs-filter"}, [
-                    STYLE(),
-                    THEAD([
-                        TR(TH({colSpan: 5}, "Songs")),
-                        TR([TH("Title"), TH("Credits"), TH("Number"), TH("Tags"), TH("Notes"), TH()]),
-                        TR([TH(INPUT({name: "title"})),
-                            TH(INPUT({name: "credits"})),
-                            TH(INPUT({name: "number"})),
-                            TH(INPUT({name: "tag"})),
-                            TH({colSpan: 3})]),
-                    ]),
-                    TBODY([state.songs.map(s => [TR({
-                        "data-title": s.title.toLowerCase(),
-                        "data-credits": (s.credits || "").toLowerCase(),
-                        "data-number": s.song_number,
-                        "data-tag": s.tags.join(","),
-                    }, [
-                        TD(s.title),
-                        TD(s.credits),
-                        TD(`${s.song_number  || ""}`),
-                        TD(UL({class: "tags",}, s.tags.map(t => LI(t)))),
-                        TD(s.notes),
-                        TD(A({class: "button", href: `/song/${s.id}`, title: "edit song"}, "edit")),
-                    ]),
-                    ]
-                    )]),
-                ]),
-            ],
-        ]);
-        replace_content("main", [
-            TABLE({"id": "songlist_filter"}, [
+            state.songs && TABLE({"id": "songlist_filter"}, [
                 TR([TH("title"), TH("Credits"), TH("Tags"),]),
                 TR([
                     TD(INPUT({name: "title", value: ""})),
@@ -81,19 +49,20 @@ const sock = ws({
                     TD(INPUT({name: "tags", })),
                 ])
             ]),
-            TABLE({"id": "songlisting"})
+            state.songs && TABLE({"id": "songlisting"})
         ]);
 
 
         const songTable = new sortable_table({
             element: DOM("#songlisting"),
             cols: [
+                {render: () => INPUT({type:"checkbox", name: "addTag"})},
                 {label: "Title", field: "title", style: "text-align: left;"},
                 {label: "Credits", field: "credits", style: "text-align: left;"},
                 {label: "Number", field: "number", style: "text-align: left;"},
                 {label: "Tags", field: "tags", style: "text-align: left;"},
                 {label: "Notes", field: "notes", style: "text-align: left;"},
-                {label: "Edit", style: "text-align: center;", class: "button", render: () => A({class: "button", href: `/song/${"row.id"}`, title: "edit song"}, "edit")},
+                {label: "Edit", style: "text-align: center;", class: "button", render: () => A({class: "button", href: `#`, title: "edit song"}, "edit")},
             ],
             rowAttrs: (row) => ({
                 "data-id": row.id,
@@ -101,6 +70,7 @@ const sock = ws({
             }),
         });
 
+        on("click", "#songlisting tr td a", (e) => e.match.href=`/song/${e.match.closest_data("id")}`);
 
         function song_list_filter() {
             //const search = DOM("#search").value.toLowerCase().split(" ");
