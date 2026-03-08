@@ -71,6 +71,7 @@ const sock = ws({
         });
 
         on("click", "#songlisting tr td a", (e) => e.match.href = `/song/${e.match.closest_data("id")}`);
+        //update song set tags = tags || 'test again'::text where id in (8,2,9) and not 'test again' = any(tags);
 
         on("click", "input[type=checkbox]", (e) => {
             const id = e.match.closest_data("id");
