@@ -41,13 +41,16 @@ const sock = ws({
                     ]),
                 ]),
             ],
-            state.songs && TABLE({"id": "songlist_filter"}, [
-                TR({class:"reverse_labels"},[
-                    TD(LABEL(["Title",INPUT({name: "title", value: ""})])),
-                    TD(LABEL(["Credits",INPUT({name: "credits", })])),
-                    TD(LABEL(["Tags", INPUT({name: "tags", })])),
-                    TD({colspan: 3}, TABLE(TR([TD("test"),TD(123),]))),
-                ])
+            state.songs && DIV({style: "display: flex; flex-direction: row;"}, [
+                TABLE({"id": "songlist_filter"}, [
+                    TR({class:"reverse_labels"},[
+                        TD(LABEL(["Title",INPUT({name: "title", value: ""})])),
+                        TD(LABEL(["Credits",INPUT({name: "credits", })])),
+                        TD(LABEL(["Tags", INPUT({name: "tags", })])),
+                        TD({colspan: 3}),
+                    ])
+                ]),
+                TABLE(TR([TD(FORM({id: "tags"},[INPUT({name: "addtag", value: ""}),INPUT({type: "submit"})])),]))
             ]),
             state.songs && TABLE({"id": "songlisting"})
         ]);
@@ -69,22 +72,6 @@ const sock = ws({
                 "key": row.id,
             }),
         });
-
-        on("click", "#songlisting tr td a", (e) => e.match.href = `/song/${e.match.closest_data("id")}`);
-        //update song set tags = tags || 'test again'::text where id in (8,2,9) and not 'test again' = any(tags);
-
-        on("click", "input[type=checkbox]", (e) => {
-            const id = e.match.closest_data("id");
-            if (CHECKED_ROWS.includes(id)) {
-                let idx = CHECKED_ROWS.indexOf(id);
-                if (idx > -1) {
-                    CHECKED_ROWS.splice(idx, 1);
-                }
-            } else {CHECKED_ROWS.push(id);}
-                console.log(CHECKED_ROWS);
-         });
-
-
 
         function song_list_filter() {
             //const search = DOM("#search").value.toLowerCase().split(" ");
@@ -117,6 +104,19 @@ const sock = ws({
 });
 
 
+on("click", "#songlisting tr td a", (e) => e.match.href = `/song/${e.match.closest_data("id")}`);
+//update song set tags = tags || 'test again'::text where id in (8,2,9) and not 'test again' = any(tags);
+
+on("click", "input[type=checkbox]", (e) => {
+    const id = e.match.closest_data("id");
+    if (CHECKED_ROWS.includes(id)) {
+        let idx = CHECKED_ROWS.indexOf(id);
+        if (idx > -1) {
+            CHECKED_ROWS.splice(idx, 1);
+        }
+    } else {CHECKED_ROWS.push(id);}
+        console.log(CHECKED_ROWS);
+ });
 
 on("input", "#songs-filter input", e => {
     let css = "";
