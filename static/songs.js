@@ -114,9 +114,16 @@ on("click", "input[type=checkbox]", (e) => {
         if (idx > -1) {
             CHECKED_ROWS.splice(idx, 1);
         }
-    } else {CHECKED_ROWS.push(id);}
-        console.log(CHECKED_ROWS);
- });
+    } else {
+        CHECKED_ROWS.push(id);
+    }
+});
+
+on("submit", "form#tags", (e) => {
+    e.preventDefault();
+    const tag = e.match.elements[0].value;
+    sock.send({cmd: "bulk_tag", song_ids: CHECKED_ROWS, tag});
+});
 
 on("input", "#songs-filter input", e => {
     let css = "";

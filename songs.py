@@ -31,6 +31,14 @@ class songs(WebSocketHandler):
             database.query("UPDATE song SET tags = tags || %s::text where id = %s and not (%s = any(tags))", (tag, int(usage), tag,))
         await self.send_updates_all(sock["ws_group"])
 
+    async def sockmsg_bulk_tag(self, sock: dict, msg: dict):
+        song_ids = list(map(int, msg.get("song_ids")))
+        if not song_ids: return
+        if tag:=msg.get("tag"):
+            tag = tag.casefold()
+            database.query("UPDATE song SET tags = tags || %s::text WHERE id = ANY(%s) AND NOT (%s = any(tags))", (tag, song_ids, tag,))
+        await self.send_updates_all(sock["ws_group"])
+
     async def sockmsg_create_song(self, sock: dict, msg: dict):
         res = database.query("INSERT INTO song (title) VALUES ('') RETURNING id")
         return {"cmd": "song_created", "id": res[0][0]}
