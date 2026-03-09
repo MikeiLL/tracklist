@@ -74,7 +74,7 @@ export class sortable_table {
             this.params.cols.map(col => TD({style: col.style, class: col.class || ""},
                 col.render ? col.render(item)
                 : col.format ? col.format(item[col.field])
-                : item[col.field]
+                    : item[col.field]
             )))// end TR
         ));
     }

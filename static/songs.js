@@ -4,7 +4,7 @@ import {
     on,
     DOM,
 } from "https://rosuav.github.io/choc/factory.js";
-const {A, BUTTON, DIV, FIELDSET, FORM, INPUT, LABEL, LI, SPAN, STYLE, TABLE, TBODY, TD, TEXTAREA, TH, THEAD, TR, UL} = lindt; //autoimport
+const {A, P, BUTTON, DIV, FIELDSET, FORM, INPUT, LABEL, LI, SPAN, STYLE, TABLE, TBODY, TD, TEXTAREA, TH, THEAD, TR, UL} = lindt; //autoimport
 import * as utils from "./utils.js$$cachebust$$";
 import ws from "./ws.js$$cachebust$$";
 
@@ -60,7 +60,7 @@ const sock = ws({
                 {label: "Title", field: "title", style: "text-align: left;"},
                 {label: "Credits", field: "credits", style: "text-align: left;"},
                 {label: "Number", field: "number", style: "text-align: left;"},
-                {label: "Tags", field: "tags", style: "text-align: left;"},
+                {label: "Tags", field: "tags", style: "text-align: left;", format: (tags) => UL({class: "tags"},tags.map(t=>LI(t)))},
                 {label: "Notes", field: "notes", style: "text-align: left;"},
                 {label: "Edit", style: "text-align: center;", class: "button", render: () => A({class: "button", href: `#`, title: "edit song"}, "edit")},
             ],
