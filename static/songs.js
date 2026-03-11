@@ -14,25 +14,25 @@ const CHECKED_ROWS = [];
 
 const sock = ws({
     render: (state) => {
+        console.log(state);
         replace_content("dialog#main .dlg_header h2", "Add Song");
         replace_content("dialog#main .dlg_content", [
             FORM({id: "editsongform"}, [
                 FIELDSET([LABEL(["Title", INPUT({type: "text", name: "title"})]),
                 LABEL(["Credits", INPUT({type: "text", name: "credits"})]),
-                LABEL(["Number", INPUT({type: "number", name: "song_number"})]),
+                LABEL(["Number", INPUT({type: "text", name: "song_number"})]),
                 LABEL(["Notes", TEXTAREA({type: "text", name: "notes"})]),
                 INPUT({type: "submit", class: "button"}, "Submit")]),
             ]),
         ]);
         replace_content("main", [
             state.song && [
-                console.log(state.song.tags),
                 DIV({class: "notifications hidden"}),
                 FORM({id: "editsongform", "data-id": state.song.id},[
                     FIELDSET([
                         LABEL(["Title", INPUT({type: "text", name: "title", value: state.song.title})]),
                         LABEL(["Credits", INPUT({type: "text", name: "credits", value: state.song.credits})]),
-                        LABEL(["Number", INPUT({type: "number", name: "song_number", value: state.song.song_number})]),
+                        LABEL(["Song Number", INPUT({type: "number", name: "song_number", value: state.song.song_number})]),
                         LABEL(["Notes", TEXTAREA({type: "text", name: "notes", value: state.song.notes})]),
                         UL({class: "tags"}, [
                             state.song.tags.map(t => LI([t, SPAN({class: "delete", "data-tag": t, title: "delete tag"}, "x")])),
@@ -46,6 +46,7 @@ const sock = ws({
                     TR({class:"reverse_labels"},[
                         TD(LABEL(["Title",INPUT({name: "title", value: ""})])),
                         TD(LABEL(["Credits",INPUT({name: "credits", })])),
+                        TD(LABEL(["Song Number",INPUT({name: "song_number", })])),
                         TD(LABEL(["Tags", INPUT({name: "tags", })])),
                         TD({colspan: 3}),
                     ])
@@ -62,7 +63,7 @@ const sock = ws({
                 {render: () => INPUT({type:"checkbox", name: "addTag"})},
                 {label: "Title", field: "title", style: "text-align: left;"},
                 {label: "Credits", field: "credits", style: "text-align: left;"},
-                {label: "Number", field: "number", style: "text-align: left;"},
+                {label: "Number", field: "song_number", style: "text-align: left;"},
                 {label: "Tags", field: "tags", style: "text-align: left;", format: (tags) => UL({class: "tags"},tags.map(t=>LI(t)))},
                 {label: "Notes", field: "notes", style: "text-align: left;"},
                 {label: "Edit", style: "text-align: center;", class: "button", render: () => A({class: "button", href: `#`, title: "edit song"}, "edit")},
