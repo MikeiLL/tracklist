@@ -34,7 +34,6 @@ class OAuth2PasswordBearerWithCookie(OAuth2PasswordBearer):
     async def __call__(self, request: Request) -> str | None:
         authorization: str = request.cookies.get("tracklist_access_token")
         scheme, param = authorization.split(" ")
-        print(request)
         if not authorization or scheme.lower() != "bearer":
             if self.auto_error:
                 raise InvalidCredentialsError

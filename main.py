@@ -74,7 +74,7 @@ async def add_process_time_header(request: Request, call_next):
     authorization: str = request.cookies.get("tracklist_access_token", "")
     token: str = authorization.replace("Bearer ", "")
     user = None
-    if request.url.path != "/":
+    if request.url.path not in ["/", "/ws"]:
         try:
             user = await utils.get_current_user(token)
         except utils.InvalidCredentialsError:

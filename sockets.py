@@ -20,25 +20,25 @@ router = APIRouter(
 async def websocket_route(websocket: WebSocket):
     ws_type = ws_group = None
     authorization: str = websocket.cookies.get("tracklist_access_token")
-    scheme, token = authorization.split(" ")
+    scheme, token = (authorization or "None -").split(" ")#authorization.split(" ")
     conn = {"sock": websocket}
     await websocket.accept()
     try:
         while True:
             data = await websocket.receive_text()
             message = json.loads(data)
-            #token = request.cookies.get('access_token')
             if message.get("cmd") == "init":
                 ws_type = message["type"]
                 ws_group = message["group"]
                 mgr = utils.ws_managers.get(ws_type)
                 if not mgr: break
                 try:
-                    user = await utils.get_current_user(token)
+                    if ws_type != "index":
+                        user = await utils.get_current_user(token)
                 except utils.InvalidCredentialsError:
                     await mgr.send_message(conn, json.dumps({"cmd": "error", "message": "Invalid credentials"}))
-                    #await websocket.close()
-                    #return
+                    await websocket.close()
+                    return
                 mgr.set_group(conn, ws_group)
                 state = await mgr.get_state(ws_group)
                 state['cmd'] = "update"
