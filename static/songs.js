@@ -14,7 +14,6 @@ const CHECKED_ROWS = [];
 
 const sock = ws({
     render: (state) => {
-        console.log(state);
         replace_content("dialog#main .dlg_header h2", "Add Song");
         replace_content("dialog#main .dlg_content", [
             FORM({id: "editsongform"}, [
@@ -43,15 +42,25 @@ const sock = ws({
             ],
             state.songs && DIV({style: "display: flex; flex-direction: row;"}, [
                 TABLE({"id": "songlist_filter"}, [
+                    TR([TH({colspan: 4}, [`Filter listing by title, credits, etc`, SPAN({class:"ellipsis"},"..."), ` Sort by clicking column headers.`]),TH()]),
                     TR({class:"reverse_labels"},[
                         TD(LABEL(["Title",INPUT({name: "title", value: ""})])),
                         TD(LABEL(["Credits",INPUT({name: "credits", })])),
                         TD(LABEL(["Song Number",INPUT({name: "song_number", })])),
                         TD(LABEL(["Tags", INPUT({name: "tags", })])),
-                        TD({colspan: 3}),
+                        TD({colspan: 3}, [
+                            TABLE(
+                                TR({class:"reverse_labels"},[
+                                    TD(
+                                        FORM({id: "tags"}, [
+                                            INPUT({name: "addtag", value: "", placeholder: "eg: folk"}),
+                                            INPUT({type: "submit", value: "Tag selected songs"})
+                                    ])), // end form, TD
+                                ])) // end tr, inner table
+                        ]),
                     ])
                 ]),
-                TABLE(TR([TD(FORM({id: "tags"},[INPUT({name: "addtag", value: ""}),INPUT({type: "submit"})])),]))
+
             ]),
             state.songs && TABLE({"id": "songlisting"})
         ]);

@@ -70,6 +70,13 @@ ul.cards li img {
     height: auto;
 }
 
+.ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
+}
+
 body>header {
     display: flex;
     flex-direction: column;
