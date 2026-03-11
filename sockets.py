@@ -37,8 +37,8 @@ async def websocket_route(websocket: WebSocket):
                     user = await utils.get_current_user(token)
                 except utils.InvalidCredentialsError:
                     await mgr.send_message(conn, json.dumps({"cmd": "error", "message": "Invalid credentials"}))
-                    await websocket.close()
-                    return
+                    #await websocket.close()
+                    #return
                 mgr.set_group(conn, ws_group)
                 state = await mgr.get_state(ws_group)
                 state['cmd'] = "update"
