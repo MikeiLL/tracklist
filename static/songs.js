@@ -123,6 +123,7 @@ on("submit", "form#tags", (e) => {
     e.preventDefault();
     const tag = e.match.elements[0].value;
     sock.send({cmd: "bulk_tag", song_ids: CHECKED_ROWS, tag});
+    CHECKED_ROWS = [];
 });
 
 on("input", "#songs-filter input", e => {
