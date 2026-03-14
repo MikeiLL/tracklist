@@ -420,6 +420,19 @@ async def song_get(request: Request, id: int = 0):
         },
     )
 
+
+@app.get("/analysis/", response_class=HTMLResponse)
+async def analysis_get(request: Request, id: int = 0):
+    return templates.TemplateResponse(
+        request=request, name="index.html",
+        context={
+            "user": request.state.user,
+            "module": "analysis",
+            "ws_type": "analysis",
+            "ws_group": id,
+        },
+    )
+
 @app.get("/event", response_class=HTMLResponse)
 @app.get("/event/{id}", response_class=HTMLResponse)
 async def event_get(request: Request, id: int = 0):

@@ -25,6 +25,22 @@ body {
     color: var(--black);
 }
 
+/* LISTS */
+
+ul.inline li {
+    display: inline;
+    margin-left: 0.5em;
+}
+
+ul.inline li:after {
+    content: ", ";
+}
+
+ul.inline li:last-of-type:after {
+    content: ";";
+}
+
+
 .flexrow {
     display: flex;
     flex-wrap: wrap;

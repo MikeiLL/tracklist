@@ -8,6 +8,7 @@ from . import utils
 from . import index
 from . import songs
 from . import events
+from . import analysis
 
 router = APIRouter(
     prefix="/ws",
