@@ -10,7 +10,7 @@ import ws from "./ws.js$$cachebust$$";
 
 import {sortable_table} from "./sortable_table.js";
 
-const CHECKED_ROWS = [];
+let CHECKED_ROWS = [];
 
 const sock = ws({
     render: (state) => {
@@ -44,10 +44,10 @@ const sock = ws({
                 TABLE({"id": "songlist_filter"}, [
                     TR([TH({colspan: 4}, [`Filter listing by title, credits, etc`, SPAN({class:"ellipsis"},"..."), ` Sort by clicking column headers.`]),TH()]),
                     TR({class:"reverse_labels"},[
-                        TD(LABEL(["Title",INPUT({name: "title", value: ""})])),
-                        TD(LABEL(["Credits",INPUT({name: "credits", })])),
-                        TD(LABEL(["Song Number",INPUT({name: "song_number", })])),
-                        TD(LABEL(["Tags", INPUT({name: "tags", })])),
+                        TD(LABEL(["Title",INPUT({class: 'filter', name: "title", value: ""})])),
+                        TD(LABEL(["Credits",INPUT({class: 'filter', name: "credits", })])),
+                        TD(LABEL(["Song Number",INPUT({class: 'filter', name: "song_number", })])),
+                        TD(LABEL(["Tags", INPUT({class: 'filter', name: "tags", })])),
                         TD({colspan: 3}, [
                             TABLE(
                                 TR({class:"reverse_labels"},[
@@ -85,18 +85,20 @@ const sock = ws({
 
         function song_list_filter() {
             //const search = DOM("#search").value.toLowerCase().split(" ");
-            const form_elems = DOM("#songlist_filter").querySelectorAll("input");
+            const form_elems = [...DOM("#songlist_filter").querySelectorAll("input")].filter((e) => e.type !== 'submit');
             const song_attributes = {};
             form_elems.forEach(elem => {
+                console.log(elem.value, elem.name);
                 if (elem.value) song_attributes[elem.name] = elem.value;
             });
             //song_attributes.search = search;
+            console.log(song_attributes);
             songTable.set_filter(song_attributes);
         }
 
 
-        on("change", "#songlist_filter input", song_list_filter);
-        on("input", "#songlist_filter input", song_list_filter);
+        on("change", "#songlist_filter input.filter", song_list_filter);
+        on("input", "#songlist_filter input.filter", song_list_filter);
 
         if (state.songs) {
             return songTable.render(state.songs);
