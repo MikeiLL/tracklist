@@ -23,6 +23,8 @@ class analysis(WebSocketHandler):
             order by date, songtitle;
             """)
         tagset = set()
+        #Perhaps instead of a set we want a hash
+        #containing the unique tag and count
         for tags in [r.get('tags') for r in data]:
             if tags:
                 for tag in tags:
