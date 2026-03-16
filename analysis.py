@@ -31,4 +31,4 @@ class analysis(WebSocketHandler):
                 for tag in tags:
                     tagset[tag] += 1
 
-        return {"data": data, "tags": tagset}
+        return {"data": data, "tags": sorted(tagset)}
