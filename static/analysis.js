@@ -15,7 +15,7 @@ const sock = ws({
             H2("coming soon..."),
             P([
                 SPAN({display: "inline", style: "font-weight: bold;"}, "Tags:"),
-                UL({style: "display: inline;", class: 'inline'}, state.tags.map(t => LI(t)))
+                UL({style: "display: inline;", class: 'inline'}, Object.entries(state.tags).map(([k,v]) => LI([k, ` (${v})`])))
             ]),
         ]);
     },

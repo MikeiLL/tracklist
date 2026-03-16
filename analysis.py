@@ -1,8 +1,9 @@
 from typing import Annotated
 import json
-from collections import defaultdict
+from collections import defaultdict, Counter
 from sqlmodel import Session, select
 from datetime import datetime
+from pprint import pprint
 
 from . import models
 from .utils import WebSocketHandler
@@ -22,12 +23,12 @@ class analysis(WebSocketHandler):
             left join song s on u.song_id = s.id
             order by date, songtitle;
             """)
-        tagset = set()
+        tagset = Counter()
         #Perhaps instead of a set we want a hash
         #containing the unique tag and count
         for tags in [r.get('tags') for r in data]:
             if tags:
                 for tag in tags:
-                    tagset.add(tag)
+                    tagset[tag] += 1
 
-        return {"data": data, "tags": list(tagset)}
+        return {"data": data, "tags": tagset}
