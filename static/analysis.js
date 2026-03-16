@@ -14,7 +14,7 @@ const sock = ws({
         replace_content("main", [
             H2("coming soon..."),
             P([
-                SPAN({display: "inline", style: "font-weight: bold;"}, "Tags:"),
+                SPAN({display: "inline", style: "font-weight: bold;"}, "Active Tags:"),
                 UL({style: "display: inline;", class: 'inline'}, state.tags.map(([k,v]) => LI([k, ` (${v})`])))
             ]),
         ]);
