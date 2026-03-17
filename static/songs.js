@@ -62,7 +62,7 @@ const sock = ws({
                 ]),
 
             ]),
-            state.songs && TABLE({"id": "songlisting"})
+            state.songs && DIV([BUTTON({id: "addsong", type: "button"}, "Add Song"),TABLE({"id": "songlisting"})])
         ]);
 
 
@@ -150,6 +150,23 @@ on("input", "#songs-filter input", e => {
 
 on("click", "#newsong", async () => {
     sock.send({cmd: "create_song"});
+});
+
+on("click", "#addsong", async (e) => {
+    const response = await fetch("/songs", {
+        method: "POST",
+        headers: {
+            "Accept": "application/json",
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            "title": "",
+            "credits": "",
+            "tags": [],
+        }),
+    });
+    const song = await response.json();
+    window.location = `/song/${song.id}`;
 });
 
 on("change", "#editsongform input, #editsongform textarea", e => {
