@@ -43,6 +43,7 @@ class analysis(WebSocketHandler):
                     "song_number": e.get("song_number", ""),
                     "usage": e.get("usage", ""),
                     "tags": e.get("tags", []),
+                    "date": eventdate,
                 })
         tagscounter = Counter()
         #Perhaps instead of a set we want a hash
