@@ -23,12 +23,33 @@ class analysis(WebSocketHandler):
             left join song s on u.song_id = s.id
             order by date, songtitle;
             """)
-        tagset = Counter()
+        eventsdict = defaultdict(dict)
+        # TODO maybe create Pydantic/SqlAlchemy model and fetch that does this.
+        #events = session.exec(select(models.Event).order_by(models.Event.date.asc()).filter(models.Event.date >= datetime.now()).limit(10)).all()
+        #events = [event.json() for event in events]
+        # TODO DRY up this and index.py
+        for e in data:
+            eventdate = e["date"]
+            eventsdict[eventdate]["id"] = e["id"]
+            eventsdict[eventdate]["date"] = e["date"]
+            eventsdict[eventdate]["title"] = e["eventtitle"]
+            eventsdict[eventdate]["presenter"] = e["presenter"]
+            eventsdict[eventdate]["contact"] = e["contact"]
+            if not "songs" in eventsdict[eventdate]:
+                eventsdict[eventdate]["songs"] = []
+            if e.get("songtitle"):
+                eventsdict[eventdate]["songs"].append({
+                    "title": e.get("songtitle", ""),
+                    "song_number": e.get("song_number", ""),
+                    "usage": e.get("usage", ""),
+                    "tags": e.get("tags", []),
+                })
+        tagscounter = Counter()
         #Perhaps instead of a set we want a hash
         #containing the unique tag and count
         for tags in [r.get('tags') for r in data]:
             if tags:
                 for tag in tags:
-                    tagset[tag] += 1
+                    tagscounter[tag] += 1
 
-        return {"data": data, "tags": sorted(tagset.items())}
+        return {"events": eventsdict, "tagscounter": sorted(tagscounter.items())}

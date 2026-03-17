@@ -10,6 +10,7 @@ import ws from "./ws.js$$cachebust$$";
 
 const sock = ws({
     render: (state) => {
+        console.log(state);
         set_content("main", DIV({class: "flexrow"},[
             state.events && DIV([
                 H2("Upcoming Events"),
