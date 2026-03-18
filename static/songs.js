@@ -91,11 +91,8 @@ const sock = ws({
                 console.log(elem.value, elem.name);
                 if (elem.value) song_attributes[elem.name] = elem.value;
             });
-            //song_attributes.search = search;
-            console.log(song_attributes);
             songTable.set_filter(song_attributes);
         }
-
 
         on("change", "#songlist_filter input.filter", song_list_filter);
         on("input", "#songlist_filter input.filter", song_list_filter);

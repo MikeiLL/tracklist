@@ -17,15 +17,18 @@ const DATE_FORMAT = new Intl.DateTimeFormat('en-US', {
 const sock = ws({
     render: (state) => {
         const CALENDAR = {}
+        console.log(state.tagscounter);
+        const tagsTable = new sortable_table({
+            element: DOM("#tags_counter"),
+            cols: [
+                {label: "Tag", field: "tag", style: "text-align: left;"},
+                {label: "Count", field: "count", style: "text-align: left;"},],
+            rowAttrs: (row) => ({
+                "data-tag": row.tag,
+                "data-count": row.count,
+            }),
+        });
         Object.entries(state.events).map(([date, details]) => {
-            /* console.log({
-                "month": DATE_FORMAT.format(new Date(date * 1000), {
-                    weekday: "long",
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                })
-            }); */
             let month = DATE_FORMAT.format(new Date(date * 1000));
             if (!CALENDAR[month]) CALENDAR[month] = [];
             CALENDAR[month] = details;
@@ -40,8 +43,9 @@ const sock = ws({
                             TD(LABEL(["tag", INPUT({name: "tag"})])),
                             TD(LABEL(["count", INPUT({type: "number", name: "count"})]))
                         ])),
-                    TABLE({id:"tags_counter"},
-                        state.tagscounter.map(([k, v]) => TR([TD(k), TD(v)])))
+                    TABLE({id: "tags_counter"},
+                        /* state.tagscounter.map(([k, v]) => TR([TD(k), TD(v)])) */),
+                    state.tagscounter && tagsTable.render(state.tagscounter.map(([k,v]) => {return {tag: k, count: v}})),
                 ]),
                 DIV([
                     H1("EVENTS..."),
@@ -52,5 +56,6 @@ const sock = ws({
             ]),
         ]);
     },
+
 
 });
