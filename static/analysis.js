@@ -14,7 +14,10 @@ const DATE_FORMAT_MONTH = new Intl.DateTimeFormat('en-US', {
     month: "long",
     year: "numeric",
 });
-const DATE_FORMAT_SHORT = new Intl.DateTimeFormat('en-US');
+const DATE_FORMAT_SHORT = new Intl.DateTimeFormat('en-US', {
+    day: "numeric",
+    weekday: "long",
+});
 const sock = ws({
     render: (state) => {
         const CALENDAR = {}
