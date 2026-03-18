@@ -62,6 +62,7 @@ const sock = ws({
             ]
         ]);
         if (state.event) {
+            console.log(state.event);
             return set_content("main", [
                 DIV({class: "notifications hidden"}),
                 BUTTON({id: "newevent", type: "button"}, "Create Another Event"),
@@ -70,8 +71,8 @@ const sock = ws({
                         LEGEND("Event Details"),
                         DIV([
                             LABEL(["Date", INPUT({
-                            type: "date", name: "date", value: new Date(state.event.date * 1000)
-                                .toISOString().split("T")[0]
+                                type: "datetime-local", name: "date", step: 3600,
+                                value: utils.localtimestring(new Date(state.event.date * 1000)),
                         })]),
                             LABEL(["Title", INPUT({type: "text", name: "title", value: state.event.title})]),
                         ]),
@@ -145,7 +146,9 @@ const sock = ws({
 })
 
 on("change", "form#event input, form#event textarea", (e) => {
-    sock.send({cmd: "updateevent", [e.match.name]: e.match.value});
+    let value = e.match.value;
+    if (e.match.type === "datetime-local") value = new Date(value).toISOString()
+    sock.send({cmd: "updateevent", [e.match.name]: value});
 })
 
 on("click", "button#addsong", async (e) => {

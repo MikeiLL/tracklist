@@ -64,3 +64,13 @@ export function formatdate(datetime) {
     const date = new Date(datetime * 1000);
     return num_to_day[date.getUTCDay()] + " " + date.toISOString().split("T")[0];
 }
+
+function two(n) {return n < 10 ? "0"+n : ""+n;}
+
+export function localtimestring(d) {
+    return d.getFullYear()
+        + "-" + two(d.getMonth() + 1)
+        + "-" + two(d.getDate())
+        + "T" + two(d.getHours())
+        + ":" + two(d.getMinutes());
+}
