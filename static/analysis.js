@@ -23,7 +23,7 @@ const sock = ws({
         const CALENDAR = {}
 
         Object.entries(state.events).map(([date, details]) => {
-            let month = DATE_FORMAT_MONTH.format(new Date(date * 1000 + 43200000 /* 12 hours in ms */));
+            let month = DATE_FORMAT_MONTH.format(new Date(date * 1000));
             if (!CALENDAR[month]) CALENDAR[month] = [];
             CALENDAR[month].push(details);
         });
@@ -46,7 +46,7 @@ const sock = ws({
                     UL({class:"wrapped-rows"}, Object.entries(CALENDAR).map(([month, details]) => {
                         return LI([
                             UL(details.sort((a,b) => a.date - b.date ).map(d => LI([
-                                DATE_FORMAT_SHORT.format(new Date(d.date * 1000 + 43200000)),
+                                DATE_FORMAT_SHORT.format(new Date(d.date * 1000)),
                             ]))),
                             H3(month),
                         ]);
