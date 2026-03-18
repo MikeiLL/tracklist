@@ -27,6 +27,20 @@ body {
 
 /* LISTS */
 
+#analysis-calendar ul.wrapped-rows>li {
+    width: 200px;
+    height: 200px;
+    border: 1px solid black;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#analysis-calendar ul.wrapped-rows h3 {
+    width: 100%;
+    text-align: center;
+}
+
 ul.inline li {
     display: inline;
     margin-left: 0.5em;
@@ -334,6 +348,14 @@ ul#library_content li .libraryitem figure figcaption {
 table td {
     padding: 0.5em;
     border: 1px dotted lightgrey;
+}
+
+/*
+    FLEX BOXES/GRIDS
+*/
+.wrapped-rows {
+    display: flex;
+    flex-wrap: wrap;
 }
 
 /*

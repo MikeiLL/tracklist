@@ -23,7 +23,7 @@ const sock = ws({
         const CALENDAR = {}
 
         Object.entries(state.events).map(([date, details]) => {
-            let month = DATE_FORMAT_MONTH.format(new Date(date * 1000));
+            let month = DATE_FORMAT_MONTH.format(new Date(date * 1000 + 43200000 /* 12 hours in ms */));
             if (!CALENDAR[month]) CALENDAR[month] = [];
             CALENDAR[month].push(details);
         });
@@ -32,23 +32,23 @@ const sock = ws({
             H2("coming soon..."),
             DIV({style: "display: flex;"},[
                 DIV([H3({display: "inline", style: "font-weight: bold;"}, "Active Tags:"),
-                    TABLE({id: "tag_filter"}, TR({class: "reverse_labels"},
+                    /* TABLE({id: "tag_filter"}, TR({class: "reverse_labels"},
                         [
                             TD(LABEL(["tag", INPUT({name: "tag"})])),
                             TD(LABEL(["count", INPUT({type: "number", name: "count"})]))
-                        ])),
+                        ])), */
                     TABLE({id: "tags_counter"},
                         /* state.tagscounter.map(([k, v]) => TR([TD(k), TD(v)])) */),
                     // tagsTable here
                 ]),
-                DIV([
+                DIV({id:"analysis-calendar"},[
                     H1("EVENTS..."),
-                    UL(Object.entries(CALENDAR).map(([month, details]) => {
+                    UL({class:"wrapped-rows"}, Object.entries(CALENDAR).map(([month, details]) => {
                         return LI([
-                            H3(month),
                             UL(details.sort((a,b) => a.date - b.date ).map(d => LI([
-                                DATE_FORMAT_SHORT.format(new Date(d.date * 1000))
-                            ])))
+                                DATE_FORMAT_SHORT.format(new Date(d.date * 1000 + 43200000)),
+                            ]))),
+                            H3(month),
                         ]);
                     }))
                 ])

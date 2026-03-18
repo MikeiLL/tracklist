@@ -33,6 +33,7 @@ class EventBase(SQLModel):
 
     def json(self, **kwargs):
         dict_data = self.model_dump()
+        # Probably epoch time, UTC (midnight)
         dict_data['date'] = int(self.date.timestamp())
         return dict_data
 
