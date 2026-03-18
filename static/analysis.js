@@ -10,14 +10,14 @@ import ws from "./ws.js$$cachebust$$";
 
 import {sortable_table} from "./sortable_table.js";
 
-const DATE_FORMAT = new Intl.DateTimeFormat('en-US', {
+const DATE_FORMAT_MONTH = new Intl.DateTimeFormat('en-US', {
     month: "long",
 });
-
+const DATE_FORMAT_SHORT = new Intl.DateTimeFormat('en-US');
 const sock = ws({
     render: (state) => {
         const CALENDAR = {}
-        console.log(state.tagscounter);
+        console.log(state);
         const tagsTable = new sortable_table({
             element: DOM("#tags_counter"),
             cols: [
@@ -29,9 +29,9 @@ const sock = ws({
             }),
         });
         Object.entries(state.events).map(([date, details]) => {
-            let month = DATE_FORMAT.format(new Date(date * 1000));
+            let month = DATE_FORMAT_MONTH.format(new Date(date * 1000));
             if (!CALENDAR[month]) CALENDAR[month] = [];
-            CALENDAR[month] = details;
+            CALENDAR[month].push(details);
         });
         console.log({"calendar": CALENDAR});
         replace_content("main", [
@@ -49,8 +49,13 @@ const sock = ws({
                 ]),
                 DIV([
                     H1("EVENTS..."),
-                    UL(Object.entries(state.events).map(([date, details]) => {
-                        return LI(DATE_FORMAT.format(new Date(date*1000)));
+                    UL(Object.entries(CALENDAR).map(([month, details]) => {
+                        return LI([
+                            H3(month),
+                            UL(details.sort((a,b) => a.date - b.date ).map(d => LI([
+                                DATE_FORMAT_SHORT.format(new Date(d.date * 1000))
+                            ])))
+                        ]);
                     }))
                 ])
             ]),
