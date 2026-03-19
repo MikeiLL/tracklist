@@ -8,8 +8,17 @@ from pprint import pprint
 from . import models
 from .utils import WebSocketHandler
 from . import database
+import functools
+import hashlib
+
+@functools.cache # don't redo all this work for each call to get state
+def build_tag_info(tag):
+    return {
+        "color": "#" + hashlib.md5(tag.encode()).hexdigest()[0:6]
+    }
 
 class analysis(WebSocketHandler):
+
   async def get_state(
             self,
             group: int,
@@ -23,6 +32,7 @@ class analysis(WebSocketHandler):
             left join song s on u.song_id = s.id
             order by date, songtitle;
             """)
+        tags_dict = {}
         eventsdict = defaultdict(dict)
         # TODO maybe create Pydantic/SqlAlchemy model and fetch that does this.
         #events = session.exec(select(models.Event).order_by(models.Event.date.asc()).filter(models.Event.date >= datetime.now()).limit(10)).all()
@@ -45,12 +55,17 @@ class analysis(WebSocketHandler):
                     "tags": e.get("tags", []),
                     "date": eventdate,
                 })
-        tagscounter = Counter()
+            tags = e.get("tags", [])
+            if tags:
+                for tag in tags:
+                    if tag not in tags_dict:
+                        tags_dict[tag] = build_tag_info(tag)
+        tags_counter = Counter()
         #Perhaps instead of a set we want a hash
         #containing the unique tag and count
         for tags in [r.get('tags') for r in data]:
             if tags:
                 for tag in tags:
-                    tagscounter[tag] += 1
+                    tags_counter[tag] += 1
 
-        return {"events": eventsdict, "tagscounter": sorted(tagscounter.items())}
+        return {"events": eventsdict, "tags_counter": sorted(tags_counter.items()), "tags_dict": tags_dict}

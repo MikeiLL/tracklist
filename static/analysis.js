@@ -4,7 +4,7 @@ import {
     on,
     DOM,
 } from "https://rosuav.github.io/choc/factory.js";
-const {DIV, H1, H2, H3, INPUT, LABEL, LI, TABLE, TD, TR, UL} = lindt; //autoimport
+const {DIV, H1, H2, H3, H4, LI, SPAN, TABLE, UL} = lindt; //autoimport
 import * as utils from "./utils.js$$cachebust$$";
 import ws from "./ws.js$$cachebust$$";
 
@@ -20,6 +20,9 @@ const DATE_FORMAT_SHORT = new Intl.DateTimeFormat('en-US', {
     timeZone: "America/Chicago",
     hour: "numeric",
 });
+
+let tags_dict;
+
 const sock = ws({
     render: (state) => {
         const CALENDAR = {}
@@ -29,9 +32,18 @@ const sock = ws({
             if (!CALENDAR[month]) CALENDAR[month] = [];
             CALENDAR[month].push(details);
         });
-        console.log({"calendar": CALENDAR});
+        tags_dict = state.tags_dict;
+
         replace_content("main", [
-            H2("coming soon..."),
+            DIV(Object.entries(tags_dict).map(([t, deets]) => SPAN({
+                style: `
+                display: inline-block;
+                height: 20px;
+                width: 20px;
+                border-radius: 50%;
+                margin: 0.5em;
+                background-color: ${deets.color}`
+            }))),
             DIV({style: "display: flex;"},[
                 DIV([H3({display: "inline", style: "font-weight: bold;"}, "Active Tags:"),
                     /* TABLE({id: "tag_filter"}, TR({class: "reverse_labels"},
@@ -40,14 +52,15 @@ const sock = ws({
                             TD(LABEL(["count", INPUT({type: "number", name: "count"})]))
                         ])), */
                     TABLE({id: "tags_counter"},
-                        /* state.tagscounter.map(([k, v]) => TR([TD(k), TD(v)])) */),
+                        /* state.tags_counter.map(([k, v]) => TR([TD(k), TD(v)])) */),
                     // tagsTable here
                 ]),
                 DIV({id:"analysis-calendar"},[
                     H1("EVENTS..."),
                     UL({class:"wrapped-rows"}, Object.entries(CALENDAR).map(([month, details]) => {
                         return LI([
-                            UL(details.sort((a,b) => a.date - b.date ).map(d => LI([
+                            UL(details.sort((a, b) => a.date - b.date).map(d => LI([
+                                d.songs.map(s => [H4({style: "color: magenta;"},[s.title, s.tags.map(t=> SPAN({style: "color: rebeccapurple;"}, t))]), ","]),
                                 DATE_FORMAT_SHORT.format(new Date(d.date * 1000)),
                             ]))),
                             H3(month),
@@ -67,7 +80,7 @@ const sock = ws({
                 "data-count": row.count,
             }),
         });
-        if (state.tagscounter) return tagsTable.render(state.tagscounter.map(([k,v]) => {return {tag: k, count: v}}))
+        if (state.tags_counter) return tagsTable.render(state.tags_counter.map(([k,v]) => {return {tag: k, count: v}}))
     },
 
 
