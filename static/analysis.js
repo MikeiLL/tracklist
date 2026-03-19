@@ -17,6 +17,8 @@ const DATE_FORMAT_MONTH = new Intl.DateTimeFormat('en-US', {
 const DATE_FORMAT_SHORT = new Intl.DateTimeFormat('en-US', {
     day: "numeric",
     weekday: "long",
+    timeZone: "America/Chicago",
+    hour: "numeric",
 });
 const sock = ws({
     render: (state) => {
