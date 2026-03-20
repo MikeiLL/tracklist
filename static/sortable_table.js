@@ -28,7 +28,6 @@ export class sortable_table {
      */
     constructor(params) {
         this.params = params;
-        console.log(this);
         this.table = params.element || choc.TABLE();
         set_content(this.table, [
             this._thead = choc.THEAD(),

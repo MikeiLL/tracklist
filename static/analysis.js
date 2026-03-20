@@ -18,13 +18,14 @@ const DATE_FORMAT_SHORT = new Intl.DateTimeFormat('en-US', {
     day: "numeric",
     weekday: "long",
     timeZone: "America/Chicago",
-    hour: "numeric",
+    /* hour: "numeric", */
 });
 
 let tags_dict;
 
 const sock = ws({
     render: (state) => {
+        console.log(state);
         const CALENDAR = {}
 
         Object.entries(state.events).map(([date, details]) => {
@@ -60,8 +61,9 @@ const sock = ws({
                     UL({class:"wrapped-rows"}, Object.entries(CALENDAR).map(([month, details]) => {
                         return LI([
                             UL(details.sort((a, b) => a.date - b.date).map(d => LI([
-                                d.songs.map(s => [H4({style: "color: magenta;"},[s.title, s.tags.map(t=> SPAN({style: "color: rebeccapurple;"}, t))]), ","]),
                                 DATE_FORMAT_SHORT.format(new Date(d.date * 1000)),
+                                H4(d.contact), H4(d.presenter), H4(d.title),
+                                d.songs.map(s => [H4({style: "color: magenta;"},[H2(s.title), SPAN(s.usage), UL(s.tags.map(t=> LI({style: "color: rebeccapurple;"}, t)))]), ","]),
                             ]))),
                             H3(month),
                         ]);
@@ -80,7 +82,7 @@ const sock = ws({
                             flex: 0 0 20px;
                             display: inline-block;
                             height: 20px;
-                            /* width: 20px; */
+                            /* width: 20px; now handled by flexbox*/
                             border-radius: 50%;
                             margin: 0.5em;
                             background-color: ${tags_dict[item.tag].color}`

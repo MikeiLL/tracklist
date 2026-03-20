@@ -29,7 +29,7 @@ body {
 
 #analysis-calendar ul.wrapped-rows>li {
     width: 200px;
-    height: 200px;
+    min-height: 200px;
     border: 1px solid black;
     display: flex;
     flex-direction: column;
