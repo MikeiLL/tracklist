@@ -73,8 +73,22 @@ const sock = ws({
         const tagsTable = new sortable_table({
             element: DOM("#tags_counter"),
             cols: [
-                {label: "Tag", field: "tag", style: "text-align: left;"},
-                {label: "Count", field: "count", style: "text-align: left;"},],
+                {
+                    render: (item) => [
+                        SPAN({
+                            style: `
+                            flex: 0 0 20px;
+                            display: inline-block;
+                            height: 20px;
+                            /* width: 20px; */
+                            border-radius: 50%;
+                            margin: 0.5em;
+                            background-color: ${tags_dict[item.tag].color}`
+                        }),
+                        SPAN({style: "flex: 1;"}, item.tag)
+                ], style: "padding: 0; display: flex; align-items: center; justify-content: flex-start;"},
+                {label: "Count", field: "count", style: "text-align: left;"},
+            ],
             rowAttrs: (row) => ({
                 "data-tag": row.tag,
                 "data-count": row.count,
