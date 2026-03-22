@@ -26,7 +26,7 @@ class analysis(WebSocketHandler):
         with Session(models.engine) as session:
             data = database.dict_query("""
             select extract(epoch from e.date)::int date, e.id, e.title eventtitle,
-                    e.presenter, e.contact, s.title songtitle, s.song_number, u.usage, s.tags, u.notes usage_notes, s.notes song_notes
+                    e.presenter, e.contact, s.title songtitle, s.song_number, s.credits, u.usage, s.tags, u.notes usage_notes, s.notes song_notes
             from event e
             left join songuse u on u.event_id = e.id
             left join song s on u.song_id = s.id
@@ -52,6 +52,7 @@ class analysis(WebSocketHandler):
                     "title": e.get("songtitle", ""),
                     "song_number": e.get("song_number", ""),
                     "usage": e.get("usage", ""),
+                    "credits": e.get("credits", ""),
                     "tags": e.get("tags", []),
                     "date": eventdate,
                 })

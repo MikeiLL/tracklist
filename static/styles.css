@@ -31,9 +31,19 @@ body {
     width: 200px;
     min-height: 200px;
     border: 1px solid black;
+    padding: 0.2em;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+}
+
+#analysis-calendar ul.wrapped-rows .title {
+    width: 100%;
+    font-style: italic;
+}
+
+#analysis-calendar ul.wrapped-rows .event-wrap {
+    margin-left: 1.3em;
 }
 
 #analysis-calendar ul.wrapped-rows h3 {

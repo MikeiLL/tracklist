@@ -4,7 +4,7 @@ import {
     on,
     DOM,
 } from "https://rosuav.github.io/choc/factory.js";
-const {DIV, H1, H2, H3, H4, LI, SPAN, TABLE, UL} = lindt; //autoimport
+const {DIV, H1, H3, H4, H5, LI, P, SPAN, TABLE, UL} = lindt; //autoimport
 import * as utils from "./utils.js$$cachebust$$";
 import ws from "./ws.js$$cachebust$$";
 
@@ -61,9 +61,17 @@ const sock = ws({
                     UL({class:"wrapped-rows"}, Object.entries(CALENDAR).map(([month, details]) => {
                         return LI([
                             UL(details.sort((a, b) => a.date - b.date).map(d => LI([
-                                DATE_FORMAT_SHORT.format(new Date(d.date * 1000)),
-                                H4(d.contact), H4(d.presenter), H4(d.title),
-                                d.songs.map(s => [H4({style: "color: magenta;"},[H2(s.title), SPAN(s.usage), UL(s.tags.map(t=> LI({style: "color: rebeccapurple;"}, t)))]), ","]),
+                                H4(DATE_FORMAT_SHORT.format(new Date(d.date * 1000))),
+                                DIV({class: "event-wrap"}, [
+                                    DIV({class: "title"}, d.title),
+                                    DIV({class: ""}, d.contact),
+                                    DIV({class: ""}, d.presenter),
+                                    d.songs.map(s => [P({}, [
+                                        H5([s.title, SPAN(` (${s.usage})`)]),
+                                        SPAN(s.credits),
+                                        UL(s.tags.map(t => LI({style: "color: rebeccapurple;"}, t)))
+                                    ]), ","])
+                                ]),
                             ]))),
                             H3(month),
                         ]);
