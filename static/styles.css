@@ -42,6 +42,10 @@ body {
     font-style: italic;
 }
 
+.tag-songs:hover {
+    cursor: pointer;
+}
+
 #analysis-calendar ul.wrapped-rows .event-wrap {
     margin-left: 1.3em;
 }

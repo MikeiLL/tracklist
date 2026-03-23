@@ -58,21 +58,48 @@ const sock = ws({
                 ]),
                 DIV({id:"analysis-calendar"},[
                     H1("EVENTS..."),
-                    UL({class:"wrapped-rows"}, Object.entries(CALENDAR).map(([month, details]) => {
+                    UL({class: "wrapped-rows"}, Object.entries(CALENDAR).map(([month, date]) => {
+                        let tags_by_date = {};
                         return LI([
-                            UL(details.sort((a, b) => a.date - b.date).map(d => LI([
+                            UL(date.sort((a, b) => a.date - b.date).map(d => {
+                                d.songs.forEach(s => {
+                                    s.tags.forEach(t => {
+                                        if (!tags_by_date[t]) tags_by_date[t] = [s.title]
+                                        else {tags_by_date[t].push(s.title)};
+                                    })
+                                });
+                                console.log(tags_by_date);
+                                /*
+                                datetags should look like:
+                                {
+                                    beginner-friendly: [song1, song2]
+                                }
+                                */
+                                return LI([
                                 H4(DATE_FORMAT_SHORT.format(new Date(d.date * 1000))),
                                 DIV({class: "event-wrap"}, [
                                     DIV({class: "title"}, d.title),
                                     DIV({class: ""}, d.contact),
                                     DIV({class: ""}, d.presenter),
-                                    d.songs.map(s => [P({}, [
-                                        H5([s.title, SPAN(` (${s.usage})`)]),
-                                        SPAN(s.credits),
-                                        UL(s.tags.map(t => LI({style: "color: rebeccapurple;"}, t)))
-                                    ]), ","])
+                                    UL({style: "display: inline;"}, Object.entries(tags_by_date)
+                                        .map(([tag, songs]) => LI({style: "display: inline-block;"},SPAN(
+                                            {
+                                                class: "tag-songs",
+                                                style: `
+                                                height: 20px;
+                                                width: 20px;
+                                                display: inline-block;
+                                                border-radius: 50%;
+                                                margin: 0.5em;
+                                                background-color: ${tags_dict[tag].color}`,
+                                                title: tag + ": " + songs.join(", ")
+                                            }
+                                        ))
+                                    ))
                                 ]),
-                            ]))),
+                                ])
+                                tags_by_date = {};
+                            })),
                             H3(month),
                         ]);
                     }))
