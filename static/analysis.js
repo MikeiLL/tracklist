@@ -75,30 +75,31 @@ const sock = ws({
                                     beginner-friendly: [song1, song2]
                                 }
                                 */
-                                return LI([
-                                H4(DATE_FORMAT_SHORT.format(new Date(d.date * 1000))),
-                                DIV({class: "event-wrap"}, [
-                                    DIV({class: "title"}, d.title),
-                                    DIV({class: ""}, d.contact),
-                                    DIV({class: ""}, d.presenter),
-                                    UL({style: "display: inline;"}, Object.entries(tags_by_date)
-                                        .map(([tag, songs]) => LI({style: "display: inline-block;"},SPAN(
-                                            {
-                                                class: "tag-songs",
-                                                style: `
-                                                height: 20px;
-                                                width: 20px;
-                                                display: inline-block;
-                                                border-radius: 50%;
-                                                margin: 0.5em;
-                                                background-color: ${tags_dict[tag].color}`,
-                                                title: tag + ": " + songs.join(", ")
-                                            }
+                                const listing =  LI([
+                                    H4(DATE_FORMAT_SHORT.format(new Date(d.date * 1000))),
+                                    DIV({class: "event-wrap"}, [
+                                        DIV({class: "title"}, d.title),
+                                        DIV({class: ""}, d.contact),
+                                        DIV({class: ""}, d.presenter),
+                                        UL({style: "display: inline;"}, Object.entries(tags_by_date)
+                                            .map(([tag, songs]) => LI({style: "display: inline-block;"},SPAN(
+                                                {
+                                                    class: "tag-songs",
+                                                    style: `
+                                                    height: 20px;
+                                                    width: 20px;
+                                                    display: inline-block;
+                                                    border-radius: 50%;
+                                                    margin: 0.5em;
+                                                    background-color: ${tags_dict[tag].color}`,
+                                                    title: tag + ": " + songs.join(", ")
+                                                }
+                                            ))
                                         ))
-                                    ))
-                                ]),
+                                    ]),
                                 ])
                                 tags_by_date = {};
+                                return listing;
                             })),
                             H3(month),
                         ]);
