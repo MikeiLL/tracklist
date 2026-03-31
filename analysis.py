@@ -69,4 +69,4 @@ class analysis(WebSocketHandler):
                 for tag in tags:
                     tags_counter[tag] += 1
 
-        return {"events": eventsdict, "tags_counter": sorted(tags_counter.items()), "tags_dict": tags_dict}
+        return {"events": eventsdict, "tags_counter": sorted(tags_counter.items(), key=lambda pair: pair[1], reverse=True), "tags_dict": tags_dict}

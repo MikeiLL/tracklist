@@ -68,13 +68,6 @@ const sock = ws({
                                         else {tags_by_date[t].push(s.title)};
                                     })
                                 });
-                                console.log(tags_by_date);
-                                /*
-                                datetags should look like:
-                                {
-                                    beginner-friendly: [song1, song2]
-                                }
-                                */
                                 const listing =  LI([
                                     H4(DATE_FORMAT_SHORT.format(new Date(d.date * 1000))),
                                     DIV({class: "event-wrap"}, [
