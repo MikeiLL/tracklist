@@ -36,15 +36,6 @@ const sock = ws({
         tags_dict = state.tags_dict;
 
         replace_content("main", [
-            DIV(Object.entries(tags_dict).map(([t, deets]) => SPAN({
-                style: `
-                display: inline-block;
-                height: 20px;
-                width: 20px;
-                border-radius: 50%;
-                margin: 0.5em;
-                background-color: ${deets.color}`
-            }))),
             DIV({style: "display: flex;"},[
                 DIV([H3({display: "inline", style: "font-weight: bold;"}, "Active Tags:"),
                     /* TABLE({id: "tag_filter"}, TR({class: "reverse_labels"},
