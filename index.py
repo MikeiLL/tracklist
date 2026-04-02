@@ -20,7 +20,7 @@ class index(WebSocketHandler):
         with Session(models.engine) as session:
             events = database.dict_query("""
             select extract(epoch from e.date)::int date, e.id, e.title eventtitle,
-                    e.presenter, e.contact, s.title songtitle, s.song_number, u.usage
+                    e.presenter, e.contact, s.title songtitle, s.song_number, u.usage, u.notes
             from event e
             left join songuse u on u.event_id = e.id
             left join song s on u.song_id = s.id
@@ -44,5 +44,6 @@ class index(WebSocketHandler):
                         "title": e.get("songtitle", ""),
                         "song_number": e.get("song_number", ""),
                         "usage": e.get("usage", ""),
+                        "notes": e.get("notes", ""),
                     })
         return {"events": eventsdict}

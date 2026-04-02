@@ -27,10 +27,11 @@ const sock = ws({
                         SPAN({class:"label"}, "Presenter "), e.presenter || "not set", " – ",
                         SPAN({class:"label"}, "Service Leader "), e.contact || "not set",
                     ]),
-                    UL({class: "eventsongs"}, e.songs.map(s => LI([
+                        UL({class: "eventsongs"}, e.songs.map(s => LI([
                         SPAN({class: "songnum",}, [s.song_number ? ["#",s.song_number] : ""]),
                         s.title,
                         s.usage && SPAN({style: "color:var(--grey);",}, " ("+s.usage+")"),
+                        s.notes && SPAN({style: "color:var(--slate);",}, " ("+s.notes+")"),
                     ])))
                     ])]
                 ))), // end UL
