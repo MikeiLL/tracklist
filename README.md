@@ -1,5 +1,11 @@
 # Track and Analyze Musical Components of an Event
 
+## Local Dev
+
+- `source venv/bin/activate`
+- `pip install -r requirements.txt`
+- `fastapi run main.py`
+
 ## Database
 
 - See .env, Models.py and Config.py

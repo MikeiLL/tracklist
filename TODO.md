@@ -1,3 +1,6 @@
+# Oct 2 2026
+- View for single event, including notes, perhaps parsed into links and/or comments.
+
 # Nov 17 2025
 
 - User Login/cmdline management
