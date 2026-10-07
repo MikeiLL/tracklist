@@ -4,7 +4,7 @@ import {
     on,
     DOM,
 } from "https://rosuav.github.io/choc/factory.js";
-const {A, BUTTON, DIV, H2, LI, P, SPAN, UL} = choc; //autoimport
+const {A, BUTTON, DIV, H2, LI, P, SPAN, UL, BR} = choc; //autoimport
 import * as utils from "./utils.js$$cachebust$$";
 import ws from "./ws.js$$cachebust$$";
 
@@ -30,7 +30,7 @@ const sock = ws({
                         UL({class: "eventsongs"}, e.songs.map(s => LI([
                         SPAN({class: "songnum",}, [s.song_number ? ["#",s.song_number] : ""]),
                         s.title,
-                        s.usage && SPAN({style: "color:var(--grey);",}, " ("+s.usage+")"),
+                        s.usage && [BR(), SPAN({style: "color:var(--grey);",}, " ("+s.usage+")")],
                         s.notes && SPAN({style: "color:var(--slate);",}, " ("+s.notes+")"),
                     ])))
                     ])]

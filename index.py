@@ -20,16 +20,20 @@ class index(WebSocketHandler):
         with Session(models.engine) as session:
             events = database.dict_query("""
             select extract(epoch from e.date)::int date, e.id, e.title eventtitle,
-                    e.presenter, e.contact, s.title songtitle, s.song_number, u.usage, u.notes
+                    e.presenter, e.contact, s.title songtitle, s.notes songnotes, s.song_number, u.usage, u.notes
             from event e
             left join songuse u on u.event_id = e.id
             left join song s on u.song_id = s.id
             where e.date >= CURRENT_DATE order by date, songtitle;
             """)
+            sortkey = {'prelude': 1, 'postlude': 100, 'opening': 2, 'closing': 99, 'unspecified': 50}
             eventsdict = defaultdict(dict)
             # TODO maybe create Pydantic/SqlAlchemy model and fetch that does this.
             #events = session.exec(select(models.Event).order_by(models.Event.date.asc()).filter(models.Event.date >= datetime.now()).limit(10)).all()
             #events = [event.json() for event in events]
+            def sequence(evt):
+                print(evt.get('usage', 'xxxxxxxxxxxxx'))
+                return sortkey.get(evt.get('usage', 'unspecified') or 'unspecified')
             for e in events:
                 eventdate = e["date"]
                 eventsdict[eventdate]["id"] = e["id"]
@@ -44,6 +48,8 @@ class index(WebSocketHandler):
                         "title": e.get("songtitle", ""),
                         "song_number": e.get("song_number", ""),
                         "usage": e.get("usage", ""),
-                        "notes": e.get("notes", ""),
+                        "event_notes": e.get("notes", ""),
+                        "song_notes": e.get("songnotes", ""),
                     })
+                    eventsdict[eventdate]["songs"].sort(key=lambda x: sortkey.get(x.get('usage').lower() or 'unspecified') or 50)
         return {"events": eventsdict}
