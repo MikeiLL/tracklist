@@ -205,11 +205,24 @@ ul.eventlist .card p.personelle {
 
 .eventsongs li {
     display: flex;
+    flex-direction: column;
     gap: 0.4em;
 }
 
 .eventsongs li span {
     color: var(--grey);
+}
+
+.eventsongs li h3 {
+    display: flex;
+    justify-content: flex-start;
+    gap: 0.2em;
+    width: 100%;
+}
+
+.eventsongs li p.songcomments {
+    font-size: 0.9em;
+    color: var(--slate);
 }
 
 .eventsongs li span.songnum {

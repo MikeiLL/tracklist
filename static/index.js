@@ -4,7 +4,7 @@ import {
     on,
     DOM,
 } from "https://rosuav.github.io/choc/factory.js";
-const {A, BUTTON, DIV, H2, LI, P, SPAN, UL, BR} = choc; //autoimport
+const {A, BUTTON, DIV, H2, H3, LI, P, SPAN, UL, BR,} = choc; //autoimport
 import * as utils from "./utils.js$$cachebust$$";
 import ws from "./ws.js$$cachebust$$";
 
@@ -27,11 +27,17 @@ const sock = ws({
                         SPAN({class:"label"}, "Presenter "), e.presenter || "not set", " – ",
                         SPAN({class:"label"}, "Service Leader "), e.contact || "not set",
                     ]),
-                        UL({class: "eventsongs"}, e.songs.map(s => LI([
-                        SPAN({class: "songnum",}, [s.song_number ? ["#",s.song_number] : ""]),
-                        s.title,
-                        s.usage && [BR(), SPAN({style: "color:var(--grey);",}, " ("+s.usage+")")],
-                        s.notes && SPAN({style: "color:var(--slate);",}, " ("+s.notes+")"),
+                        UL({class: "eventsongs"}, e.songs.map(s => LI(
+                            [
+                                H3([SPAN({class: "songnum", }, [s.song_number ? ["#", s.song_number] : ""]),
+                                    SPAN(" "),
+                                s.title,
+                                SPAN(" "),
+                                s.usage && [BR(), SPAN({class: "usage",}, " ("+s.usage+")")],]),
+                                DIV([
+                                    s.songcomments && P({class:"songcomments", }, s.songcomments),
+                                    s.songlinks && UL({class: "songlinks", }, s.songlinks.map(n => LI(n)))
+                                ]),
                     ])))
                     ])]
                 ))), // end UL

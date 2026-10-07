@@ -50,7 +50,8 @@ class index(WebSocketHandler):
                         "song_number": e.get("song_number", ""),
                         "usage": e.get("usage", ""),
                         "event_notes": e.get("notes", ""),
-                        "song_notes": songnotes,
+                        "songcomments": ' '.join(filter(lambda n: not n.startswith('http'), songnotes)),
+                        "songlinks": list(filter(lambda n: n.startswith('http'), songnotes)),
                     })
                     eventsdict[eventdate]["songs"].sort(key=lambda x: sortkey.get(x.get('usage').lower() or 'unspecified') or 50)
         return {"events": eventsdict}
