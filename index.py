@@ -31,9 +31,6 @@ class index(WebSocketHandler):
             # TODO maybe create Pydantic/SqlAlchemy model and fetch that does this.
             #events = session.exec(select(models.Event).order_by(models.Event.date.asc()).filter(models.Event.date >= datetime.now()).limit(10)).all()
             #events = [event.json() for event in events]
-            def sequence(evt):
-                print(evt.get('usage', 'xxxxxxxxxxxxx'))
-                return sortkey.get(evt.get('usage', 'unspecified') or 'unspecified')
             for e in events:
                 eventdate = e["date"]
                 eventsdict[eventdate]["id"] = e["id"]
@@ -44,12 +41,16 @@ class index(WebSocketHandler):
                 if not "songs" in eventsdict[eventdate]:
                     eventsdict[eventdate]["songs"] = []
                 if e.get("songtitle"):
+                    try:
+                        songnotes = e.get('songnotes', '').split()
+                    except AttributeError:
+                        songnotes = []
                     eventsdict[eventdate]["songs"].append({
                         "title": e.get("songtitle", ""),
                         "song_number": e.get("song_number", ""),
                         "usage": e.get("usage", ""),
                         "event_notes": e.get("notes", ""),
-                        "song_notes": e.get("songnotes", ""),
+                        "song_notes": songnotes,
                     })
                     eventsdict[eventdate]["songs"].sort(key=lambda x: sortkey.get(x.get('usage').lower() or 'unspecified') or 50)
         return {"events": eventsdict}
